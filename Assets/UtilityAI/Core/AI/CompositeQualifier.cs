@@ -7,7 +7,7 @@
     /// <summary>
     /// A base class for Qualifiers that base their score on a number of child.
     /// </summary>
-    public abstract class CompositeQualifier : IQualifier, ICloneFrom
+    public abstract class CompositeQualifier : IQualifier
     {
         public bool isDisabled { get; set; }
 
@@ -33,10 +33,6 @@
             throw new NotImplementedException();
         }
 
-
-        public void CloneFrom(object other){
-            throw new NotImplementedException();
-        }
 
 
         //  Used for CompareTo().  

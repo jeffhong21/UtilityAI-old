@@ -5,15 +5,13 @@
 	public class LayerMapping : MonoBehaviour 
 	{
 
-		public LayerMask coverLayer;
-		public LayerMask enemiesLayer;
+		public LayerMask entitesLayer;
 		public LayerMask playersLayer;
 
 
         private void Awake()
         {
-            Layers.cover = coverLayer;
-            Layers.enemies = enemiesLayer;
+            Layers.entites = entitesLayer;
             Layers.players = playersLayer;
         }
 

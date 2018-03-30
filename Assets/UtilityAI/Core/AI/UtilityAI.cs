@@ -41,6 +41,12 @@
             rootSelector = new ScoreSelector();
         }
 
+        public UtilityAI(string aiName)
+        {
+            rootSelector = new ScoreSelector();
+            name = aiName;
+        }
+
         public void AddSelector(Selector s)
         {
             throw new NotImplementedException();

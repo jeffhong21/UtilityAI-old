@@ -7,12 +7,14 @@
 
     public enum UtilityAIClientState
     {
-        Unregistered,
-        Running,
-        Stopped,
-        Pause
+        Running,  ///   The associated AI is running.
+        Stopped,  ///   The associated AI is not running.
+        Pause     ///   The associated AI is paused.
     }
-    [Serializable]
+
+    /// <summary>
+    /// This is the decision maker.
+    /// </summary>
     public class UtilityAIClient
     {
         private UtilityAIComponent agent;
@@ -23,160 +25,177 @@
         /// <summary>
         /// The Current state of the client.
         /// </summary>
-        public UtilityAIClientState state { get { return _state; } set { _state = value; } }
+        public UtilityAIClientState state { get { return _state; } protected set { _state = value; } }
 
         [SerializeField]
         private float _intervalMin;
-        /// <summary>
-        /// 
-        /// </summary>
         public float intervalMin { get { return _intervalMin; } set { _intervalMin = value; } }
         [SerializeField]
         private float _intervalMax;
-        /// <summary>
-        /// 
-        /// </summary>
         public float intervalMax { get { return _intervalMax; } set { _intervalMax = value; } }
         [SerializeField]
         private float _startDelayMin;
-        /// <summary>
-        /// 
-        /// </summary>
         public float startDelayMin { get { return _startDelayMin; } set { _startDelayMin = value; } }
         [SerializeField]
         private float _startDelayMax;
-        /// <summary>
-        /// 
-        /// </summary>
         public float startDelayMax { get { return _startDelayMax; } set { _startDelayMax = value; } }
 
 
         private IContextProvider contextProvider;
         private IContext context;
+        public IAction currentAction { get; protected set; }
 
-
-        public IAction currentAction { get; private set; }
+        //  For Debuging.
+        public bool debug;
 
 
         public UtilityAIClient(Guid aiId, IContextProvider contextProvider) {}
 
-        public UtilityAIClient(UtilityAIComponent agent, IUtilityAI ai, IContextProvider contextProvider)
+        public UtilityAIClient(UtilityAIComponent agent, IUtilityAI ai)
         {
             this.agent = agent;
             this.ai = ai;
-            this.contextProvider = contextProvider;
-            context = contextProvider.GetContext();
+            contextProvider = agent.contextProvider;
+            context = agent.context;
             
             this.intervalMin = this.intervalMax = 1f;
             this.startDelayMin = this.startDelayMax = 0f;
-            state = UtilityAIClientState.Unregistered;
+            state = UtilityAIClientState.Stopped;
         }
 
-        public UtilityAIClient(IUtilityAI ai, IContextProvider contextProvider, float intervalMin, float intervalMax, float startDelayMin, float startDelayMax)
+        public UtilityAIClient(UtilityAIComponent agent, IUtilityAI ai, float intervalMin, float intervalMax, float startDelayMin, float startDelayMax)
         {
+            this.agent = agent;
             this.ai = ai;
-            this.contextProvider = contextProvider;
-            context = contextProvider.GetContext();
+            contextProvider = agent.contextProvider;
+            context = agent.context;
 
             this.intervalMin = intervalMin;
             this.intervalMax = intervalMax;
             this.startDelayMin = startDelayMin;
             this.startDelayMax = startDelayMax;
-            state = UtilityAIClientState.Unregistered;
+            state = UtilityAIClientState.Stopped;
         }
 
 
         /// <summary>
-        /// This gets the best Action to perform and executes it.
+        /// Selects the action.
         /// </summary>
-        /// <returns></returns>
-        public IEnumerator Execute()
+        /// <returns><c>true</c>, if action was selected, <c>false</c> otherwise.</returns>
+        public bool SelectAction()
         {
+            //  Check if Action is still running.
+            if (IsActionStillRunning())
+                return false;
+
             //  Select the action to be executed.
             currentAction = ai.Select(context);
             currentAction.utilityAIComponent = agent;
-            //  Set the current state to "Running".
-            Resume();
-            //  Execute the current action.
-            currentAction.Execute(context);
+            return currentAction != null;
+        }
 
-            while(state == UtilityAIClientState.Running){
-                if(state == UtilityAIClientState.Stopped)
+
+        bool IsActionStillRunning(){
+            if (currentAction == null)
+                return false;
+            return currentAction.actionStatus == ActionStatus.Running;
+        }
+
+
+        /// <summary>
+        ///  This gets the best Action to perform and executes it.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator ExecuteAction()
+        {
+            if (currentAction == null)
+                yield break;
+
+            if(debug) Debug.Log(string.Format("{0} is executing action. |  {1}", ai.name, Time.time));
+            //  Set the current state to "Running".
+            Start();
+
+            //  Execute the current action.
+            currentAction.ExecuteAction(context);
+
+            while(currentAction.actionStatus == ActionStatus.Running){
+                if(currentAction.actionStatus != ActionStatus.Running)
                     break;
                 yield return null;
             }
-
+            //Debug.Log("Action Done Executing at:  " + Time.time);
+            Stop();
             yield return null;
         }
+
 
         /// <summary>
         /// Called to initialize AIClient
         /// </summary>
-        public void Start()
-        {
-            if(state == UtilityAIClientState.Unregistered){
-                foreach (IQualifier qualifier in ai.rootSelector.qualifiers){
-                    ActionBase action = qualifier.action as ActionBase;
-                    action.OnEndAction += Stop;
-                }
-            }
-            state = UtilityAIClientState.Stopped;
+        public void Start(){
+            if (state != UtilityAIClientState.Stopped)
+                return;
+
+            state = UtilityAIClientState.Running;
             OnStart();
+            //Debug.Log(string.Format("Executing action:  {0} | {1}", currentAction.GetType().Name, Time.time));
         }
 
         /// <summary>
         /// Called when action has finished executing.  Client remains in Stopped state until it performs a Execute().
         /// </summary>
-        public void Stop()
-        {
+        public void Stop(){
+            if (state == UtilityAIClientState.Stopped)
+                return;
+            
             state = UtilityAIClientState.Stopped;
             OnStop();
+            //Debug.Log(string.Format("{0} is finished executing.  | {1}", currentAction.GetType().Name, Time.time));
         }
 
         /// <summary>
         /// Called when the ai is performing a Execute().  Client stays in Running state until it finishes its action.
         /// </summary>
-        public void Resume()
-        {
+        public void Resume(){
+            if (state != UtilityAIClientState.Pause)
+                return;
+            
             state = UtilityAIClientState.Running;
             OnResume();
         }
 
-        public void Pause()
-        {
+
+        public void Pause(){
+            if (state != UtilityAIClientState.Running)
+                return;
+            
             state = UtilityAIClientState.Pause;
             OnPause();
         }
 
-        
-        private void UnRegister()
-        {
-            foreach (IQualifier qualifier in ai.rootSelector.qualifiers){
-                ActionBase action = qualifier.action as ActionBase;
-                action.OnEndAction -= Pause;
-            }
-        }
+
+
+
 
 
         protected virtual void OnStart()
         {
-            //Debug.Log(string.Format("Executing action:  {0} | {1}", currentAction.GetType().Name, Time.time));
+
         }
 
         protected virtual void OnStop()
         {
-            //Debug.Log(string.Format("{0} is finished executing.  | {1}", currentAction.GetType().Name, Time.time));
-            //Debug.Log("Current State:  " + state);
+
         }
 
         protected virtual void OnPause()
         {
-            Debug.Log("Current State:  " + state);
+
         }
 
         protected virtual void OnResume()
         {
-            //Debug.Log("Current State:  " + state);
+
         }
 
 

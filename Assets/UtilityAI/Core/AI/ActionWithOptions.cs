@@ -2,6 +2,7 @@
 {
     using UnityEngine;
     using System;
+    using System.Linq;
     using System.Collections.Generic;
 
 
@@ -12,29 +13,27 @@
     public abstract class ActionWithOptions<TOption> : IAction, IEquatable<TOption>
     {
         public UtilityAIComponent utilityAIComponent { get; set; }
-        
+        public ActionStatus actionStatus { get; protected set; }
+
         //  All the OptionScorers attached to this action.
-        public IOptionScorer<TOption>[] scorers;
-        //  All the TOptions and its score.
-        public List<ScoredOption<TOption>> scoredOptions = new List<ScoredOption<TOption>>();
-
-
-        //  From IAction
-        public abstract void Execute(IContext context);
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:UtilityAI.ActionWithOptions`1"/> class.
-        /// </summary>
-        /// <param name="objects">Objects.</param>
-        protected ActionWithOptions(params IOptionScorer<TOption>[] objects)
+        public List<IOptionScorer<TOption>> _scorers;
+        public List<IOptionScorer<TOption>> scorers
         {
-            scorers = new IOptionScorer<TOption>[objects.Length];
-            for (int i = 0; i < objects.Length; i++){
-                scorers[i] = objects[i];
-            }
+            get { return _scorers; }
+            protected set { _scorers = value; }
         }
+        //  All the TOptions and its score.
+        public List<ScoredOption<TOption>> scoredOptions { get; protected set;}
 
+
+        protected abstract void Execute(IContext context);
+
+
+        public void EndAction(){
+            if (actionStatus != ActionStatus.Running)
+                return;
+            actionStatus = ActionStatus.Success;
+        }
 
 
         /// <summary>
@@ -59,7 +58,7 @@
                 var option = options[i];
                 float score = 0f;
                 //  Loop through each scorer options.
-                for (int index = 0; index < scorers.Length; index++){
+                for (int index = 0; index < scorers.Count; index++){
                     score += scorers[index].Score(context, option);
                 }
                 //  ScoredOptions would contain all the scores and TOption to return to the ActionWithOptions.
@@ -74,9 +73,14 @@
             scoredOptions.Reverse();
             best = scoredOptions[0].option;
 
+            //string scoredOptionInfo = "";
+            //foreach(ScoredOption<TOption> scoredOption in scoredOptions){
+            //    scoredOptionInfo += string.Format("OptionType:  {0}  | Score: {1}\n", scoredOption.option, scoredOption.score);
+            //}
+            //Debug.Log(scoredOptionInfo);
+
             return best;
         }
-
 
 
         /// <summary>
@@ -86,7 +90,7 @@
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="options">Options.</param>
-        /// <param name="optionsBuffer">Options buffer.</param>
+        /// <param name="optionsBuffer">The buffer which is populated with the scored options.</param>
         public List<ScoredOption<TOption>> GetAllScorers(IContext context, List<TOption> options, List<ScoredOption<TOption>> optionsBuffer)
         {
             optionsBuffer.Clear();
@@ -96,7 +100,7 @@
                 var option = options[i];
                 float score = 0f;
 
-                for (int index = 0; index < scorers.Length; index++){
+                for (int index = 0; index < scorers.Count; index++){
                     score += scorers[index].Score(context, option);
                 }
 
@@ -108,32 +112,51 @@
         }
 
 
-
-
-
-
         /// <summary>
         /// "Clones or transfers settings from the other entity to itself"
         /// Used if you want to switch this ActionWithOptions to another.
         /// From video demo.
         /// </summary>
         /// <param name="other">Other.</param>
-        public void CloneFrom(object other)
-        {
-            throw new NotImplementedException();
+        public void CloneFrom(ActionWithOptions<TOption> other){
+            utilityAIComponent = other.utilityAIComponent;
+            scorers = other.scorers;
+            scoredOptions = other.scoredOptions;
         }
+
         //  From video demo.
-        public bool Equals(TOption other)
-        {
+        public bool Equals(TOption other){
             throw new NotImplementedException();
         }
 
 
+        public void ExecuteAction(IContext context)
+        {
+            //  TODO: Maybe add some check to see if action can be executed.
+            actionStatus = ActionStatus.Running;
+            Execute(context);
+        }
 
 
+        public ActionWithOptions(){
+            scoredOptions = new List<ScoredOption<TOption>>();
+        }
 
+        public ActionWithOptions(ActionWithOptions<TOption> other){
+            scoredOptions = other.scoredOptions;
+            scorers = other.scorers;
+        }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:UtilityAI.ActionWithOptions`1"/> class.
+        /// </summary>
+        /// <param name="objects">Objects.</param>
+        public ActionWithOptions(params IOptionScorer<TOption>[] objects)
+        {
+            scoredOptions = new List<ScoredOption<TOption>>();
+            scorers = new List<IOptionScorer<TOption>>(objects.ToList() );
 
+        }
 
     }
 

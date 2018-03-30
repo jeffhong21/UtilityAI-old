@@ -22,9 +22,10 @@ GameObject:
   - component: {fileID: 65622656700584172}
   - component: {fileID: 54900022169935566}
   - component: {fileID: 195926622196247472}
-  m_Layer: 0
+  - component: {fileID: 114039982351542784}
+  m_Layer: 9
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Entity
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -39,7 +40,7 @@ GameObject:
   - component: {fileID: 4021984460093860}
   - component: {fileID: 33145599597757720}
   - component: {fileID: 23044025033212644}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141,6 +142,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.1, y: 1.1, z: 1.1}
   m_Center: {x: 0, y: 0.6, z: 0}
+--- !u!114 &114039982351542784
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1350677154273038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2085f679b934105ab21ce817379df2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wanderTimeRange: {x: 4, y: 12}
+  movementSpeed: 0.1
+  wanderTime: 0
 --- !u!195 &195926622196247472
 NavMeshAgent:
   m_ObjectHideFlags: 1

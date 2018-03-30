@@ -1,0 +1,17 @@
+﻿<Properties StartupConfiguration="{5A6D36D9-6A32-0D56-BD7C-975C39BDAFAD}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/UtilityAI/Core/Testing/MockMoveAI.cs">
+    <Files>
+      <File FileName="Assets/UtilityAI/Core/Components/UtilityAIComponent.cs" Line="35" Column="87" />
+      <File FileName="Assets/UtilityAI/Core/Components/UtilityAIClient.cs" Line="77" Column="50" />
+      <File FileName="Assets/UtilityAI/Core/Testing/MockMoveAI.cs" Line="9" Column="9" />
+      <File FileName="Assets/UtilityAI/Core/Misc/AiConstructor.cs" Line="22" Column="47" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.UtilityAI PreferredExecutionTarget="Unity.Editor" />
+  <MultiItemStartupConfigurations />
+</Properties>

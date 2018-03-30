@@ -14,33 +14,53 @@
     [Serializable]
     public class AIContext : IContext
     {
-        public AIContext(NpcController entity)
-        {
-            this.entity = entity;
-            this.navMeshAgent = entity.GetComponent<NavMeshAgent>();
-
-            this.waypoints = new List<Transform>();
-            this.enemies = new List<IEntity>();
-            this.sampledPositions = new List<Vector3>();
-            
-            waypoints = GameObject.FindGameObjectsWithTag("Waypoints").Select(g => g.transform).ToList();
-
-            navMeshAgent.stoppingDistance = navMeshAgent.stoppingDistance == 0f ? 5f : navMeshAgent.stoppingDistance;
-        }
-
 
         [SerializeField]
         private NpcController _entity;
         public NpcController entity { get { return _entity; } private set { _entity = value; } }
 
+        [SerializeField]
+        private NavMeshAgent _navMeshAgent;
+        public NavMeshAgent navMeshAgent { get { return _navMeshAgent; } private set { _navMeshAgent = value; } }
 
-        public NavMeshAgent navMeshAgent;
+        [SerializeField]
+        private LayerMask _entitiesLayer;
+        public LayerMask entitiesLayer { get { return _entitiesLayer; } private set { _entitiesLayer = value; } }
+
 
         public List<Transform> waypoints;  //{ get; private set; }
 
-        public List<IEntity> enemies;   //{ get; private set; }
+        public List<Transform> enemies;   //{ get; private set; }
 
         public List<Vector3> sampledPositions;   //{ get; private set; }
+
+
+
+
+        public AIContext(NpcController entity)
+        {
+            this.entity = entity;
+            this.enemies = new List<Transform>();
+            this.sampledPositions = new List<Vector3>();
+
+
+            entitiesLayer = (1 << LayerMask.NameToLayer("Entity"));
+            SetWaypoints();
+            SetNavMeshAgent();
+        }
+
+
+
+        void SetWaypoints(){
+            waypoints = new List<Transform>();
+            waypoints = GameObject.FindGameObjectsWithTag("Waypoints").Select(g => g.transform).ToList();
+        }
+
+        void SetNavMeshAgent(){
+            navMeshAgent = entity.GetComponent<NavMeshAgent>();
+            navMeshAgent.stoppingDistance = Math.Abs(navMeshAgent.stoppingDistance) < float.Epsilon ? 5f : navMeshAgent.stoppingDistance;
+        }
+
 
 
     }

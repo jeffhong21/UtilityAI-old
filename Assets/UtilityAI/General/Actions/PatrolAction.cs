@@ -8,9 +8,10 @@
     public class PatrolAction : ActionBase
     {
 
+        float _distance;
 
 
-        public override void Execute(IContext context)
+        protected override void Execute(IContext context)
         {
             AIContext c = context as AIContext;
             NavMeshAgent navMeshAgent = c.entity.GetComponent<NavMeshAgent>();
@@ -19,11 +20,11 @@
             Vector3 destination = c.waypoints[index].position;
 
             utilityAIComponent.StartCoroutine(MoveToDestination(c, destination));
-            
         }
 
 
-        public IEnumerator MoveToDestination(AIContext context, Vector3 destination)
+
+        IEnumerator MoveToDestination(AIContext context, Vector3 destination)
         {
             bool hasReachedDestination = false;
 
@@ -32,25 +33,31 @@
 
             while(hasReachedDestination == false)
             {
-                // float distanceToTarget = Vector3.Distance(context.entity.position, destination);
-                // if (distanceToTarget <= context.navMeshAgent.stoppingDistance)
-                //     hasReachedDestination = true;
-                // yield return null;
                 if(context.navMeshAgent.pathPending == false){
-                    if (context.navMeshAgent.remainingDistance <= context.navMeshAgent.stoppingDistance){
+                    if (GetDistanceRemaining(context) <= context.navMeshAgent.stoppingDistance){
                         //context.navMeshAgent.isStopped = true; //  Stop walking.
                         hasReachedDestination = true;
                     }
                 }
-                else{
-                    yield return null;
-                }
+
 
                 yield return null;
             }
 
             EndAction();
             yield return null;
+        }
+
+
+        float GetDistanceRemaining(AIContext context)
+        {
+            float distance = 0.0f;
+            Vector3[] corners = context.navMeshAgent.path.corners;
+            for (int c = 0; c < corners.Length - 1; c++){
+                distance += Mathf.Abs((corners[c] - corners[c + 1]).magnitude);
+            }
+            _distance = distance;
+            return distance;
         }
 
 

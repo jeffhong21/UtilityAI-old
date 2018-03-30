@@ -14,6 +14,7 @@
 
             if (c.enemies.Count == 0)
             {
+                Debug.Log("No enemies");
                 return 0f;
             }
 

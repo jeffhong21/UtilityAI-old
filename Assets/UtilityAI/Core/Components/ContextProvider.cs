@@ -7,9 +7,10 @@
     public class ContextProvider : MonoBehaviour, IContextProvider
     {
         private NpcController npc;
-        
-        private IContext _context;
-        public IContext context { get {return _context;} set {_context = value;}}
+
+        [SerializeField]
+        private AIContext _context;
+        public AIContext context { get {return _context;} set {_context = value;}}
 
         public IContext GetContext()
         {
