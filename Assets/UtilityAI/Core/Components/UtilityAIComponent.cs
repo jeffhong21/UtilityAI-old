@@ -27,6 +27,8 @@
         public bool debugNavMesh;
         public bool showCustomInspector;
         private bool isExecuteRunning = true;
+        public UtilityAIDebugger debugger;
+
 
 
         void Awake()
@@ -34,23 +36,25 @@
             if (visualizer == null)
                 visualizer = GetComponent<ActionWithOptionsVisualizer>();
 
+            //  Initialize Context
             if (contextProvider == null){
                 contextProvider = gameObject.GetComponent(typeof(IContextProvider)) as IContextProvider;
 
-                ContextProvider _contextProvider = contextProvider as ContextProvider;
-                _contextProvider.context = new AIContext(GetComponent<Bang.NpcController>());
-                context = _contextProvider.GetContext();
-
-                //var c = context as AIContext;
-                //Debug.Log(c.entitiesLayer.value);
+                ContextProvider cp = contextProvider as ContextProvider;
+                cp.context = new AIContext(GetComponent<Bang.NpcController>());
+                context = cp.GetContext();
             }
 
+
+            if(debugger == null)
+                debugger = GetComponent<UtilityAIDebugger>();
         }
 
 
         void OnEnable(){
             Initialize();
         }
+
 
         public void GetClient(Guid aiId){
             
@@ -71,6 +75,7 @@
             //  Starting all clients.
             foreach (UtilityAIClient client in clients)
             {
+                //client.ActionSelected += debugger.GetSelectorResults;
                 client.Start();
                 StartCoroutine(ExecuteUpdate(client));
             }
@@ -96,19 +101,23 @@
             {   
                 if (Time.time > nextInterval)
                 {
-                    if(client.SelectAction()){
-                        activeAction = client.ExecuteAction();
-                        yield return StartCoroutine(activeAction);
-                        activeAction = null;
+                    client.Execute();
+                    nextInterval = Time.time + Random.Range(client.intervalMin - 0.5f, client.intervalMax + 1f);
+
+                    //if (client.SelectAction()){
+                    //    activeAction = client.ExecuteAction();
+                    //    yield return StartCoroutine(activeAction);
+                    //    activeAction = null;
 
 
-                        nextInterval = Time.time + Random.Range(client.intervalMin - 0.5f, client.intervalMax + 1f);
+                    //    nextInterval = Time.time + Random.Range(client.intervalMin - 0.5f, client.intervalMax + 1f);
 
-                        if(debugNextIntervalTime) Debug.Log("Current Time:  " + Time.time +  " | Next interval in:  " + (nextInterval - Time.time));
-                    }
-                    else{
-                        //Debug.Log("client has not selected action.");
-                    }
+                    //    if (debugNextIntervalTime) Debug.Log("Current Time:  " + Time.time + " | Next interval in:  " + (nextInterval - Time.time));
+                    //}
+                    //else{
+                    //    //Debug.Log("client has not selected action.");
+                    //}
+
                 }
 
                 yield return null;

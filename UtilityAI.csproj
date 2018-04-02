@@ -274,14 +274,15 @@
     <Compile Include="Assets\UtilityAI\Core\AI\ScorerOptionBase.cs" />
     <Compile Include="Assets\UtilityAI\Core\AI\Selector.cs" />
     <Compile Include="Assets\UtilityAI\Core\AI\UtilityAI.cs" />
+    <Compile Include="Assets\UtilityAI\Core\AI\UtilityAIClient.cs" />
     <Compile Include="Assets\UtilityAI\Core\Components\ActionWithOptionsVisualizer.cs" />
     <Compile Include="Assets\UtilityAI\Core\Components\ContextProvider.cs" />
-    <Compile Include="Assets\UtilityAI\Core\Components\UtilityAIClient.cs" />
     <Compile Include="Assets\UtilityAI\Core\Components\UtilityAIComponent.cs" />
     <Compile Include="Assets\UtilityAI\Core\Components\UtilityAIDebugger.cs" />
     <Compile Include="Assets\UtilityAI\Core\Context\AIContext.cs" />
     <Compile Include="Assets\UtilityAI\Core\Context\IContext.cs" />
     <Compile Include="Assets\UtilityAI\Core\Context\IContextProvider.cs" />
+    <Compile Include="Assets\UtilityAI\Core\Context\PerceptionModule.cs" />
     <Compile Include="Assets\UtilityAI\Core\General\AiManager.cs" />
     <Compile Include="Assets\UtilityAI\Core\General\AIStorage.cs" />
     <Compile Include="Assets\UtilityAI\Core\General\Attributes.cs" />
@@ -294,7 +295,6 @@
     <Compile Include="Assets\UtilityAI\Core\Misc\Options\SelectorOption.cs" />
     <Compile Include="Assets\UtilityAI\Core\Misc\Options\UtilityAIData.cs" />
     <Compile Include="Assets\UtilityAI\Core\Misc\Options\UtilityAIManager.cs" />
-    <Compile Include="Assets\UtilityAI\Core\Modules\PerceptionModule.cs" />
     <Compile Include="Assets\UtilityAI\Core\Testing\Actions\PatrolAction.cs" />
     <Compile Include="Assets\UtilityAI\Core\Testing\Actions\RandomMove.cs" />
     <Compile Include="Assets\UtilityAI\Core\Testing\Actions\ScanForEntities.cs" />

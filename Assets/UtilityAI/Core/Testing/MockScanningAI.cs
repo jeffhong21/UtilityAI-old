@@ -36,7 +36,7 @@ namespace UtilityAI
         void DefineScorers()
         {
             scorers = new List<IScorer>();
-            scorer = new TestScorerA();
+            scorer = new HasEnemies();
             scorers.Add(scorer);
 
             allScorers.Add(scorers.ToArray());

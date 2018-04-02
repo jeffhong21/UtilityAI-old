@@ -45,21 +45,15 @@
 
 
             entitiesLayer = (1 << LayerMask.NameToLayer("Entity"));
-            SetWaypoints();
-            SetNavMeshAgent();
-        }
 
-
-
-        void SetWaypoints(){
             waypoints = new List<Transform>();
             waypoints = GameObject.FindGameObjectsWithTag("Waypoints").Select(g => g.transform).ToList();
-        }
 
-        void SetNavMeshAgent(){
             navMeshAgent = entity.GetComponent<NavMeshAgent>();
             navMeshAgent.stoppingDistance = Math.Abs(navMeshAgent.stoppingDistance) < float.Epsilon ? 5f : navMeshAgent.stoppingDistance;
         }
+
+
 
 
 

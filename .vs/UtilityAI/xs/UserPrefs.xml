@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{5A6D36D9-6A32-0D56-BD7C-975C39BDAFAD}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="../../unity_assets/Apex/Apex Binaries/ApexAI.XML">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/UtilityAI/Core/Components/UtilityAIComponent.cs">
     <Files>
-      <File FileName="../../unity_assets/Apex/Apex Binaries/ApexAI.XML" Line="2040" Column="35" />
+      <File FileName="Assets/UtilityAI/Core/Components/UtilityAIComponent.cs" Line="80" Column="55" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

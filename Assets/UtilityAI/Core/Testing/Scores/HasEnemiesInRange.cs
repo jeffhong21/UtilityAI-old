@@ -7,7 +7,7 @@
         [SerializeField]
         public float score = 50;
         [SerializeField]
-        public float range = 3f;  //  entites within this range
+        public float range = 10f;  //  entites within this range
 
 
         public override float Score(IContext context)

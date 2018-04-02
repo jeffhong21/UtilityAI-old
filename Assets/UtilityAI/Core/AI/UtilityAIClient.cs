@@ -45,6 +45,9 @@
 
         //  For Debuging.
         public bool debug;
+        public Dictionary<CompositeQualifier, float> selectorResults = new Dictionary<CompositeQualifier, float>();
+        public event Action<IContext, List<IQualifier>> ActionSelected;
+
 
 
         public UtilityAIClient(Guid aiId, IContextProvider contextProvider) {}
@@ -89,6 +92,50 @@
 
 
         /// <summary>
+        /// For Debugging
+        /// </summary>
+        public Dictionary<CompositeQualifier, float> GetSelectorResults(IContext context, List<IQualifier> qualifiers)
+        {
+            selectorResults.Clear();
+            for (int index = 0; index < qualifiers.Count; index++){
+                CompositeQualifier qualifier = qualifiers[index] as CompositeQualifier;
+                var score = qualifier.Score(context, qualifier.scorers);
+                selectorResults.Add(qualifier, score);
+            }
+
+            return selectorResults;
+        }
+
+
+        public void Execute()
+        {
+            IAction newAction = ai.Select(context);
+            if (currentAction != newAction){
+                currentAction = newAction;
+                currentAction.utilityAIComponent = agent;
+                //if (ActionSelected != null){
+                //    ActionSelected(context, ai.rootSelector.qualifiers);
+                //    Debug.Log(ai.name + " just pinged debugger");
+                //}
+                    
+                selectorResults = GetSelectorResults(context, ai.rootSelector.qualifiers);
+            }
+            else{
+                return;
+            }
+
+            if (currentAction == null)
+                return;
+            //  Execute the current action.
+            currentAction.ExecuteAction(context);
+            //Debug.Log("Executing " + currentAction.GetType().Name);
+        }
+
+
+
+
+
+        /// <summary>
         /// Selects the action.
         /// </summary>
         /// <returns><c>true</c>, if action was selected, <c>false</c> otherwise.</returns>
@@ -101,16 +148,10 @@
             //  Select the action to be executed.
             currentAction = ai.Select(context);
             currentAction.utilityAIComponent = agent;
+            //  For debugging.
+            selectorResults = GetSelectorResults(context, ai.rootSelector.qualifiers);
 
             return currentAction != null;
-
-            //IAction newAction = ai.Select(context);
-            //if (currentAction != newAction){
-            //    currentAction = newAction;
-            //    currentAction.utilityAIComponent = agent;
-            //}
-            //if(currentAction != null)
-            //Debug.Log(newAction.GetType().Name + " | " + currentAction.GetType().Name);
         }
 
 

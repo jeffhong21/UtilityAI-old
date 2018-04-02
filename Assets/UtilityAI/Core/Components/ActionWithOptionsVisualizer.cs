@@ -29,12 +29,12 @@
 
         void OnEnable()
         {
-            if (contextProvider == null){
-                contextProvider = gameObject.GetComponent(typeof(IContextProvider)) as IContextProvider;
-                ContextProvider _contextProvider = contextProvider as ContextProvider;
-                _contextProvider.context = new AIContext(GetComponent<Bang.NpcController>());
-                context = _contextProvider.GetContext();
-            }
+            //if (contextProvider == null){
+            //    contextProvider = gameObject.GetComponent(typeof(IContextProvider)) as IContextProvider;
+            //    ContextProvider _contextProvider = contextProvider as ContextProvider;
+            //    _contextProvider.context = new AIContext(GetComponent<Bang.NpcController>());
+            //    context = _contextProvider.GetContext();
+            //}
         }
 
 

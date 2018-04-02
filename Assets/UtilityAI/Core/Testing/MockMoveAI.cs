@@ -29,17 +29,22 @@ namespace UtilityAI
         void DefineActions()
         {
             a = new TacticalMoveAction(new[] { new ProximityToNearestEnemy() });
+            var actionWithOption = a as ActionWithOptions<Vector3>;
+            actionWithOption.name = "ProximityToNearestEnemy";
             actions.Add(a);
             a = new TacticalMoveAction(new[] { new OverRangeToClosestEnemy() });
+            actionWithOption = a as ActionWithOptions<Vector3>;
+            actionWithOption.name = "OverRangeToClosestEnemy";
             actions.Add(a);
         }
+
 
         void DefineScorers()
         {
             scorers = new List<IScorer>();
-            scorer = new TestScorerA();
+            scorer = new HasEnemies();
             scorers.Add(scorer);
-            scorer = new TestScorerA();
+            scorer = new HasEnemiesInRange();
             scorers.Add(scorer);
 
             allScorers.Add(scorers.ToArray());
@@ -51,6 +56,7 @@ namespace UtilityAI
             allScorers.Add(scorers.ToArray());
         }
 
+
         void DefineQualifiers()
         {
             q = new CompositeScoreQualifier();
@@ -59,12 +65,15 @@ namespace UtilityAI
 
             q = new CompositeScoreQualifier();
             qualifiers.Add(q);
+
         }
+
 
         void DefineSelectors()
         {
 
         }
+
 
         void Initialize()
         {

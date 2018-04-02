@@ -12,6 +12,7 @@
     /// </summary>
     public abstract class ActionWithOptions<TOption> : IAction, IEquatable<TOption>
     {
+        public string name;
         public UtilityAIComponent utilityAIComponent { get; set; }
         public ActionStatus actionStatus { get; protected set; }
 
