@@ -25,7 +25,7 @@
         Selector Item { get; }
     }
 
-
+    //[CreateAssetMenu(menuName = "UtilityAI")]
     public class UtilityAI : IUtilityAI
     {
         public int id { get; private set; }
@@ -79,8 +79,14 @@
         /// <param name="context">Context.</param>
         public IAction Select(IContext context)
         {
-            var qualifiers = rootSelector.qualifiers;
-            IAction action = rootSelector.Select(context, qualifiers).action;
+            List<IQualifier> qualifiers = rootSelector.qualifiers;
+            IQualifier winner = rootSelector.Select(context, qualifiers);
+
+            CompositeQualifier cq = winner as CompositeQualifier;
+            float score = cq.Score(context, cq.scorers);
+            IAction action = winner.action;
+
+
 
             return action;
         }
@@ -92,7 +98,7 @@
 
         public void PrepareForSerialize()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -101,13 +107,13 @@
         public void OnBeforeSerialize()
         {
             PrepareForSerialize();
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
 
         public void InitializeAfterDeserialize(object rootObject)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -116,7 +122,7 @@
         public void OnAfterDeserialize()
         {
             // InitializeAfterDeserialize(object rootObject);
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

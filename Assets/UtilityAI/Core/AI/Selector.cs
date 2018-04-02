@@ -94,25 +94,23 @@
         
         public override IQualifier Select(IContext context, List<IQualifier> qualifiers)  //  Need default qualifier.  Final return value should be default Qualifier.
         {
-            
             List<IQualifier> qList = new List<IQualifier>(qualifiers);
+
 
             //  Get score for all qualifiers
             for (int index = 0; index < qList.Count; index++)
             {
                 CompositeQualifier q = qList[index] as CompositeQualifier;
-                q.Score(context, q.scorers);
-
+                var score = q.Score(context, q.scorers);
             }
 
             //  Sort list of qualifiers.
             qList.Sort();   //  Sorts in accending order.
             qList.Reverse();//  Sorts in decending order.
-
+            var best = qList[0];
 
             //DebugSelectorWinner(context, qList);
-
-            return qList[0];
+            return best;
         }
 
 
@@ -130,7 +128,7 @@
             {
                 CompositeQualifier q = qualifiers[index] as CompositeQualifier;
                 var score = q.Score(context, q.scorers);
-                winnerInfo += q.GetType().Name + " | " + score + "\n";
+                winnerInfo += q.GetType().Name + " | " + q.action.GetType().Name +  " | " + score + "\n";
             }
 
             Debug.Log(winnerInfo);

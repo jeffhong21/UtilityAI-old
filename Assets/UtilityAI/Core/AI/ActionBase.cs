@@ -13,10 +13,10 @@
         Failure
     }
 
-
+    [AICategory("ActionBase")]
     public abstract class ActionBase : IAction
     {
-        public UtilityAIComponent utilityAIComponent {get; set;}
+        public UtilityAIComponent utilityAIComponent {get; set;} //  So it can start coroutine
         public ActionStatus actionStatus { get; protected set; }
 
 

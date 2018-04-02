@@ -6,11 +6,16 @@
 
     public class ContextProvider : MonoBehaviour, IContextProvider
     {
-        private NpcController npc;
+
 
         [SerializeField]
         private AIContext _context;
         public AIContext context { get {return _context;} set {_context = value;}}
+
+        [SerializeField]
+        private PerceptionModule _module;
+        public PerceptionModule module { get { return _module; } set { _module = value; } }
+
 
         public IContext GetContext()
         {

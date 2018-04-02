@@ -20,11 +20,9 @@
         private UtilityAIComponent agent;
         public IUtilityAI ai { get; private set; }
 
+
         [SerializeField]
         private UtilityAIClientState _state;
-        /// <summary>
-        /// The Current state of the client.
-        /// </summary>
         public UtilityAIClientState state { get { return _state; } protected set { _state = value; } }
 
         [SerializeField]
@@ -50,6 +48,18 @@
 
 
         public UtilityAIClient(Guid aiId, IContextProvider contextProvider) {}
+
+        public UtilityAIClient(IUtilityAI ai)
+        {
+            this.ai = ai;
+            //contextProvider = agent.contextProvider;
+            //context = agent.context;
+
+            this.intervalMin = this.intervalMax = 1f;
+            this.startDelayMin = this.startDelayMax = 0f;
+            state = UtilityAIClientState.Stopped;
+            //Debug.Log("Initialized via scriptable object");
+        }
 
         public UtilityAIClient(UtilityAIComponent agent, IUtilityAI ai)
         {
@@ -91,11 +101,20 @@
             //  Select the action to be executed.
             currentAction = ai.Select(context);
             currentAction.utilityAIComponent = agent;
+
             return currentAction != null;
+
+            //IAction newAction = ai.Select(context);
+            //if (currentAction != newAction){
+            //    currentAction = newAction;
+            //    currentAction.utilityAIComponent = agent;
+            //}
+            //if(currentAction != null)
+            //Debug.Log(newAction.GetType().Name + " | " + currentAction.GetType().Name);
         }
 
 
-        bool IsActionStillRunning(){
+        private bool IsActionStillRunning(){
             if (currentAction == null)
                 return false;
             return currentAction.actionStatus == ActionStatus.Running;
@@ -127,6 +146,8 @@
             Stop();
             yield return null;
         }
+
+
 
 
         /// <summary>

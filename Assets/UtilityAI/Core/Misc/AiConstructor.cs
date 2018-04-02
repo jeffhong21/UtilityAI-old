@@ -3,36 +3,42 @@ namespace UtilityAI
     using UnityEngine;
     using System.Collections.Generic;
 
-    public abstract class AiConstructor
+    public interface AiConstructor
     {
 
-        protected IAction action;
-        protected IScorer scorer;
-        protected IQualifier qualifier;
-        protected Selector selector;
-
-        protected IUtilityAI utilityAI;
-
-
-        protected abstract void DefineActions();
-        protected abstract void DefineScorers();
-        protected abstract void DefineQualifiers();
-        protected abstract void DefineSelectors();
-
-        protected abstract void ConfigureAI();
+        IAction a { get; }
+        IScorer scorer { get; }
+        List<IScorer> scorers { get; }
+        IQualifier q { get; }
+        Selector s { get; }
 
 
-        protected AiConstructor(){
-            
-        }
+        void DefineActions();
+        void DefineScorers();
+        void DefineQualifiers();
+        void DefineSelector();
 
-        void Initialize()
+        /// <summary>
+        /// Calls all Define methods
+        /// </summary>
+        void Initialize();
+
+
+    }
+
+
+    public struct SelectorConstructor
+    {
+        public List<IQualifier> qualifiers { get; set; }
+        public List<IScorer[]> allScorers { get; set; }
+        public List<IAction> actions { get; set; }
+
+
+        public SelectorConstructor(List<IQualifier> qualifiers, List<IScorer[]> allScorers, List<IAction> actions)
         {
-            DefineActions();
-            DefineScorers();
-            DefineQualifiers();
-            DefineSelectors();
-            ConfigureAI();
+            this.actions = actions;
+            this.allScorers = allScorers;
+            this.qualifiers = qualifiers;
         }
 
     }

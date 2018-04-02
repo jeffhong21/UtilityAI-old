@@ -7,20 +7,25 @@
     using System.Collections.Generic;
     using Random = UnityEngine.Random;
 
-
+    /// <summary>
+    /// TaskNetworkComponent
+    /// </summary>
     public class UtilityAIComponent : MonoBehaviour
     {
 
         //  public aiConfig;
         public List<UtilityAIClient> clients = new List<UtilityAIClient>();
+        [HideInInspector]
+        public List<AIStorage> ai = new List<AIStorage>();
         public IContextProvider contextProvider { get; private set; }
         public IContext context { get; private set; }
 
-        public ActionWithOptionsVisualizer visualizer;
+        public ActionWithOptionsVisualizer visualizer { get; private set; }
 
         [Header(" -------- Debug -------- ")]
         public bool debugNextIntervalTime;
         public bool debugNavMesh;
+        public bool showCustomInspector;
         private bool isExecuteRunning = true;
 
 
@@ -47,8 +52,9 @@
             Initialize();
         }
 
-        public void GetClient(Guid aiId) { }
-
+        public void GetClient(Guid aiId){
+            
+        }
 
 
         public void Initialize()
@@ -69,6 +75,7 @@
                 StartCoroutine(ExecuteUpdate(client));
             }
         }
+
 
         public UtilityAIClient InitializeAI(IUtilityAI utilityAI, float iMin = 1f, float iMax = 1f, float sMin = 0f, float sMax = 0f)
         {
@@ -100,13 +107,24 @@
                         if(debugNextIntervalTime) Debug.Log("Current Time:  " + Time.time +  " | Next interval in:  " + (nextInterval - Time.time));
                     }
                     else{
-                        Debug.Log("client has not selected action.");
+                        //Debug.Log("client has not selected action.");
                     }
                 }
 
                 yield return null;
             }
         }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

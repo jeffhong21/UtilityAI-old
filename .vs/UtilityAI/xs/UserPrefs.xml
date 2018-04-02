@@ -1,10 +1,7 @@
 ﻿<Properties StartupConfiguration="{5A6D36D9-6A32-0D56-BD7C-975C39BDAFAD}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/UtilityAI/Core/Testing/MockMoveAI.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="../../unity_assets/Apex/Apex Binaries/ApexAI.XML">
     <Files>
-      <File FileName="Assets/UtilityAI/Core/Components/UtilityAIComponent.cs" Line="35" Column="87" />
-      <File FileName="Assets/UtilityAI/Core/Components/UtilityAIClient.cs" Line="77" Column="50" />
-      <File FileName="Assets/UtilityAI/Core/Testing/MockMoveAI.cs" Line="9" Column="9" />
-      <File FileName="Assets/UtilityAI/Core/Misc/AiConstructor.cs" Line="22" Column="47" />
+      <File FileName="../../unity_assets/Apex/Apex Binaries/ApexAI.XML" Line="2040" Column="35" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

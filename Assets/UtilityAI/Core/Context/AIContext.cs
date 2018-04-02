@@ -15,11 +15,11 @@
     public class AIContext : IContext
     {
 
-        [SerializeField]
+        //[SerializeField]
         private NpcController _entity;
         public NpcController entity { get { return _entity; } private set { _entity = value; } }
 
-        [SerializeField]
+        //[SerializeField]
         private NavMeshAgent _navMeshAgent;
         public NavMeshAgent navMeshAgent { get { return _navMeshAgent; } private set { _navMeshAgent = value; } }
 
@@ -32,7 +32,7 @@
 
         public List<Transform> enemies;   //{ get; private set; }
 
-        public List<Vector3> sampledPositions;   //{ get; private set; }
+        public List<Vector3> sampledPositions{ get; private set; }
 
 
 

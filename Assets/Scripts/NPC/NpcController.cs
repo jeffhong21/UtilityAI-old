@@ -5,31 +5,31 @@
 
     public class NpcController : Entity
 	{
-        public float scanRange = 20f;
+        //public float scanRange = 20f;
 		
 		
 
 		//  Context
         //private AIContext npcContext;
-		private NpcHealth npcHealth;
-		private NpcShoot npcShoot;
-		private NpcMovement npcMove;
+		//private NpcHealth npcHealth;
+		//private NpcShoot npcShoot;
+		//private NpcMovement npcMove;
 		//  AI
         private UtilityAIComponent npcAI;
 
 		void Awake()
 		{
             //npcContext = new AIContext(this);
-			npcHealth = this.GetComponent<NpcHealth>();
-			npcShoot = this.GetComponent<NpcShoot>();
-			npcMove = this.GetComponent<NpcMovement>();
+			//npcHealth = this.GetComponent<NpcHealth>();
+			//npcShoot = this.GetComponent<NpcShoot>();
+			//npcMove = this.GetComponent<NpcMovement>();
             npcAI = this.GetComponent<UtilityAIComponent>();
 		}
 
 		void OnEnable(){
-			npcHealth.enabled = true;
-			npcShoot.enabled = true;
-			npcMove.enabled = true;
+			//npcHealth.enabled = true;
+			//npcShoot.enabled = true;
+			//npcMove.enabled = true;
 		}
 
 		void OnDisable()
@@ -43,7 +43,7 @@
 
 		public void MoveTo(Vector3 _position){
 			
-            npcMove.MoveTo(_position);
+            //npcMove.MoveTo(_position);
 		}
 
 		public void StopMoving(){

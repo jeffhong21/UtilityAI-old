@@ -27,9 +27,7 @@
 
         public abstract float Score(IContext context, List<IScorer> scorers);
 
-        public float Score(IContext context)
-        {
-            
+        public float Score(IContext context){
             throw new NotImplementedException();
         }
 

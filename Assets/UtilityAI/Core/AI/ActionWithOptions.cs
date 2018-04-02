@@ -73,13 +73,15 @@
             scoredOptions.Reverse();
             best = scoredOptions[0].option;
 
+            return scoredOptions[0].score == 0 ? default(TOption) : scoredOptions[0].option;
+
             //string scoredOptionInfo = "";
             //foreach(ScoredOption<TOption> scoredOption in scoredOptions){
             //    scoredOptionInfo += string.Format("OptionType:  {0}  | Score: {1}\n", scoredOption.option, scoredOption.score);
             //}
             //Debug.Log(scoredOptionInfo);
 
-            return best;
+            //return best;
         }
 
 

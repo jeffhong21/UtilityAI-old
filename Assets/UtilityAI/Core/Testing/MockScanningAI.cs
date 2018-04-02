@@ -3,42 +3,79 @@ namespace UtilityAI
     using UnityEngine;
     using System.Collections.Generic;
 
+
     public class MockScanningAI : UtilityAI
     {
+        IAction a;
+        IScorer scorer;
+        List<IScorer> scorers;
+        IQualifier q;
+        Selector s;
 
-        //protected IAction action;
-        //protected IScorer scorer;
-        //protected IScorer[] scorers;
-        //protected IQualifier qualifier;
-        //protected Selector selector;
+        List<IQualifier> qualifiers = new List<IQualifier>();
+        List<IScorer[]> allScorers = new List<IScorer[]>();
+        List<IAction> actions = new List<IAction>();
 
-        List<IQualifier> qualifiers = new List<IQualifier>()
-            {
-                new CompositeScoreQualifier(),
-                new CompositeScoreQualifier(), 
-            };
 
-        List<IScorer[]> scorers = new List<IScorer[]>()
-            {
-                new IScorer[]{
-                new TestScorerA()
-            },
-                new IScorer[]{
-                new TestScorerB()
-            },
-
-            };
-
-        List<IAction> actions = new List<IAction>()
+        ActionWithOptionsVisualizer _visualizer;
+        public ActionWithOptionsVisualizer visualizer
         {
-            new ScanForEntities(),
-            new ScanForPositions()
-        };
+            get { return _visualizer; }
+            set { _visualizer = value; }
+        }
 
+
+        void DefineActions()
+        {
+            a = new ScanForEntities();
+            actions.Add(a);
+            a = new ScanForPositions();
+            actions.Add(a);
+        }
+
+        void DefineScorers()
+        {
+            scorers = new List<IScorer>();
+            scorer = new TestScorerA();
+            scorers.Add(scorer);
+
+            allScorers.Add(scorers.ToArray());
+
+            scorers = new List<IScorer>();
+            scorer = new TestScorerB();
+            scorers.Add(scorer);
+
+            allScorers.Add(scorers.ToArray());
+        }
+
+        void DefineQualifiers()
+        {
+            q = new CompositeScoreQualifier();
+            qualifiers.Add(q);
+
+
+            q = new CompositeScoreQualifier();
+            qualifiers.Add(q);
+        }
+
+        void DefineSelectors()
+        {
+
+        }
+
+        void Initialize()
+        {
+            DefineActions();
+            DefineScorers();
+            DefineQualifiers();
+            DefineSelectors();
+        }
 
 
         public void ConfigureAI(Selector rs)
         {
+            Initialize();
+
             //  Setup each qualifiers action and scorers.
             for (int index = 0; index < qualifiers.Count; index++)
             {
@@ -50,7 +87,7 @@ namespace UtilityAI
                 qualifier.action = actions[index];
 
                 //  Add scorers to qualifier.
-                foreach (IScorer scorer in scorers[index])
+                foreach (IScorer scorer in allScorers[index])
                 {
                     if (qualifier is CompositeQualifier)
                     {
@@ -59,7 +96,6 @@ namespace UtilityAI
                     }
                 }
             }
-
             Debug.Log(string.Format("Finished Initializing {0}", this.GetType().Name));
         }
 

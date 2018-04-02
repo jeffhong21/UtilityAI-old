@@ -39,14 +39,11 @@ GameObject:
   - component: {fileID: 136027588193680870}
   - component: {fileID: 54918467602518928}
   - component: {fileID: 195063876441933296}
+  - component: {fileID: 114298895390773100}
+  - component: {fileID: 114906483873831602}
   - component: {fileID: 114541039400208912}
-  - component: {fileID: 114030196098641024}
-  - component: {fileID: 114586565930940210}
-  - component: {fileID: 114848770174669278}
   - component: {fileID: 114460860694152824}
   - component: {fileID: 114693930265666734}
-  - component: {fileID: 114983623558829260}
-  - component: {fileID: 114298895390773100}
   m_Layer: 0
   m_Name: NPC
   m_TagString: Untagged
@@ -137,18 +134,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &114030196098641024
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1800250705246292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64dd80caa6c314ef3b1c9e5c85a8c607, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  deathVfx: {fileID: 0}
 --- !u!114 &114298895390773100
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -172,14 +157,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _context:
-    _entity: {fileID: 0}
-    _navMeshAgent: {fileID: 0}
     _entitiesLayer:
       serializedVersion: 2
       m_Bits: 0
     waypoints: []
     enemies: []
-    sampledPositions: []
+  _module:
+    viewAngle: 54
+    sightRange: 20
+    rangeAttackRange: 20
+    requiredDetectionCount: 15
+    sightRangeMultiplier: 1.5
+    mySightLayers:
+      serializedVersion: 2
+      m_Bits: 0
+    myObstacleLayer:
+      serializedVersion: 2
+      m_Bits: 0
+    myEnemyLayers:
+      serializedVersion: 2
+      m_Bits: 0
+    myFriendlyLayers:
+      serializedVersion: 2
+      m_Bits: 0
+    myEnemyTags: []
+    myFriendlyTags: []
 --- !u!114 &114541039400208912
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -189,18 +191,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 03d5600c032cc4af2b7959d6b0ee4827, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scanRange: 20
---- !u!114 &114586565930940210
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1800250705246292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39cd83f6ba97943f4b0a52fbdf4e500b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114693930265666734
@@ -214,10 +204,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da799bac6f0e7432d83cef96740cd66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visualizer: {fileID: 0}
+  ai:
+  - {fileID: 0}
   debugNextIntervalTime: 0
   debugNavMesh: 0
---- !u!114 &114848770174669278
+  showCustomInspector: 0
+--- !u!114 &114906483873831602
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -225,19 +217,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1800250705246292}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f6d07a96d8134c2c98acf44dfdb1136, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weponHold: {fileID: 0}
---- !u!114 &114983623558829260
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1800250705246292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e249b243faf9844fe89ea7a69c84247e, type: 3}
+  m_Script: {fileID: 11500000, guid: cd9daada1a5f344b8b4de4d6dae30420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gizmoAlpha: 1

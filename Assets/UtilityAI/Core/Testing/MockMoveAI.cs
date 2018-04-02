@@ -5,51 +5,80 @@ namespace UtilityAI
 
     public class MockMoveAI : UtilityAI
     {
+        IAction a;
+        IScorer scorer;
+        List<IScorer> scorers;
+        IQualifier q;
+        Selector s;
+
+        List<IQualifier> qualifiers = new List<IQualifier>();
+        List<IScorer[]> allScorers = new List<IScorer[]>();
+        List<IAction> actions = new List<IAction>();
 
 
-        List<IScorer[]> scorers = new List<IScorer[]>()
-            {
-                new IScorer[]{
-                new TestScorerA(),
-                new TestScorerA() 
-            },
-                new IScorer[]{
-                new HasEnemiesInRange()
-            },
-
-            };
-
-        List<IAction> actions = new List<IAction>()
-        {
-            new TacticalMoveAction( new[] {new ProximityToNearestEnemy()} ),
-            new TacticalMoveAction( new[] {new OverRangeToClosestEnemy()} )
-            //new PatrolAction(),
-            //new RandomMove()
-
-        };
-
-
-        List<IQualifier> qualifiers = new List<IQualifier>()
-            {
-                new CompositeScoreQualifier(),
-                new CompositeScoreQualifier(),
-            };
-
-
-
-        private ActionWithOptionsVisualizer _visualizer;
+        ActionWithOptionsVisualizer _visualizer;
         public ActionWithOptionsVisualizer visualizer{
             get { return _visualizer; }
-            set{
+            set{ 
                 _visualizer = value;
                 _visualizer.action = actions[0] as ActionWithOptions<Vector3>;
             }
         }
 
 
+        void DefineActions()
+        {
+            a = new TacticalMoveAction(new[] { new ProximityToNearestEnemy() });
+            actions.Add(a);
+            a = new TacticalMoveAction(new[] { new OverRangeToClosestEnemy() });
+            actions.Add(a);
+        }
+
+        void DefineScorers()
+        {
+            scorers = new List<IScorer>();
+            scorer = new TestScorerA();
+            scorers.Add(scorer);
+            scorer = new TestScorerA();
+            scorers.Add(scorer);
+
+            allScorers.Add(scorers.ToArray());
+
+            scorers = new List<IScorer>();
+            scorer = new TestScorerB();
+            scorers.Add(scorer);
+
+            allScorers.Add(scorers.ToArray());
+        }
+
+        void DefineQualifiers()
+        {
+            q = new CompositeScoreQualifier();
+            qualifiers.Add(q);
+
+
+            q = new CompositeScoreQualifier();
+            qualifiers.Add(q);
+        }
+
+        void DefineSelectors()
+        {
+
+        }
+
+        void Initialize()
+        {
+            DefineActions();
+            DefineScorers();
+            DefineQualifiers();
+            DefineSelectors();
+        }
+
 
         public void ConfigureAI(Selector rs)
         {
+            Initialize();
+
             //  Setup each qualifiers action and scorers.
             for (int index = 0; index < qualifiers.Count; index++)
             {
@@ -61,7 +90,7 @@ namespace UtilityAI
                 qualifier.action = actions[index];
 
                 //  Add scorers to qualifier.
-                foreach (IScorer scorer in scorers[index])
+                foreach (IScorer scorer in allScorers[index])
                 {
                     if (qualifier is CompositeQualifier)
                     {
@@ -70,7 +99,6 @@ namespace UtilityAI
                     }
                 }
             }
-
             Debug.Log(string.Format("Finished Initializing {0}", this.GetType().Name));
         }
 
@@ -82,7 +110,8 @@ namespace UtilityAI
             ConfigureAI(this.rootSelector);
         }
 
-        public MockMoveAI(string aiName) : base(aiName){
+        public MockMoveAI(string aiName) 
+            : base(aiName){
             ConfigureAI(this.rootSelector);
         }
 
