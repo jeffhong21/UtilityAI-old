@@ -1,4 +1,4 @@
-namespace UtilityAI
+﻿namespace UtilityAI
 {
     using UnityEngine;
     using System;
@@ -16,7 +16,7 @@ namespace UtilityAI
         }
 
 
-        public override float Score(IContext context)
+        public override float Score(IAIContext context)
         {
             return score;
         }

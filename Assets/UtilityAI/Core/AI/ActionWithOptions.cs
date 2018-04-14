@@ -13,7 +13,7 @@
     public abstract class ActionWithOptions<TOption> : IAction, IEquatable<TOption>
     {
         public string name;
-        public UtilityAIComponent utilityAIComponent { get; set; }
+        public TaskNetworkComponent utilityAIComponent { get; set; }
         public ActionStatus actionStatus { get; protected set; }
 
         //  All the OptionScorers attached to this action.
@@ -27,7 +27,7 @@
         public List<ScoredOption<TOption>> scoredOptions { get; protected set;}
 
 
-        protected abstract void Execute(IContext context);
+        protected abstract void Execute(IAIContext context);
 
 
         public void EndAction(){
@@ -44,7 +44,7 @@
         /// <returns> Return a type option for the action to execute on..</returns>
         /// <param name="context">Context.</param>
         /// <param name="options">Options.</param>
-        public TOption GetBest(IContext context, List<TOption> options)
+        public TOption GetBest(IAIContext context, List<TOption> options)
         {
             scoredOptions.Clear();
 
@@ -94,7 +94,7 @@
         /// <param name="context">Context.</param>
         /// <param name="options">Options.</param>
         /// <param name="optionsBuffer">The buffer which is populated with the scored options.</param>
-        public List<ScoredOption<TOption>> GetAllScorers(IContext context, List<TOption> options, List<ScoredOption<TOption>> optionsBuffer)
+        public List<ScoredOption<TOption>> GetAllScorers(IAIContext context, List<TOption> options, List<ScoredOption<TOption>> optionsBuffer)
         {
             optionsBuffer.Clear();
 
@@ -133,7 +133,7 @@
         }
 
 
-        public void ExecuteAction(IContext context)
+        public void ExecuteAction(IAIContext context)
         {
             //  TODO: Maybe add some check to see if action can be executed.
             actionStatus = ActionStatus.Running;

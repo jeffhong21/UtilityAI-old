@@ -9,7 +9,7 @@
         [SerializeField]
         public float score = 25;
 
-        public override float Score(IContext context)
+        public override float Score(IAIContext context)
         {
             
             //var c = (AIContext)context;

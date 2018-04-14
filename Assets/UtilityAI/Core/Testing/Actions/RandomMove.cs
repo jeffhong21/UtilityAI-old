@@ -10,7 +10,7 @@
         
         float sightRange = 20f;  //  Make sure to consider navMesh stoppingDistance.
 
-        protected override void Execute(IContext context)
+        protected override void Execute(IAIContext context)
         {
             var c = context as AIContext;
 

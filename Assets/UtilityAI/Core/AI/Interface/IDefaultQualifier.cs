@@ -5,6 +5,6 @@
     {
 
         IAction action { get; set; }
-        float Score(IContext _context);
+        float Score(IAIContext _context);
     }
 }

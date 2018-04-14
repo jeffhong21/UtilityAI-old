@@ -8,27 +8,28 @@
     /// <summary>
     /// UtilityAI creates the rootSelector and initializes the tree.
     /// </summary>
-    public interface IUtilityAI : ISerializationCallbackReceiver
+    public interface IUtilityAI //: ISerializationCallbackReceiver
     {
         void AddSelector(Selector s);
         void RemoveSelector(Selector s);
         bool ReplaceSelector(Selector current, Selector replacement);
-        void FindSelector(Selector s);
-        IAction Select(IContext context);
+        Selector FindSelector(Selector s);
+        IAction Select(IAIContext context);
         void RegenerateIds();
         void PrepareForSerialize();
         void InitializeAfterDeserialize(System.Object rootObject);
-        int id { get; }
+        Guid id { get; }
         string name { get; set; }
         Selector rootSelector { get; set; }
         int selectorCount { get; }
         Selector Item { get; }
     }
 
-    //[CreateAssetMenu(menuName = "UtilityAI")]
-    public class UtilityAI : IUtilityAI
+
+    [Serializable]
+    public class UtilityAI// : IUtilityAI
     {
-        public int id { get; private set; }
+        public Guid id { get; private set; }
         public string name { get; set; }
         public Selector rootSelector { get; set; }
 
@@ -39,12 +40,14 @@
         public UtilityAI()
         {
             rootSelector = new ScoreSelector();
+            RegenerateIds();
         }
 
         public UtilityAI(string aiName)
         {
             rootSelector = new ScoreSelector();
             name = aiName;
+            RegenerateIds();
         }
 
         public void AddSelector(Selector s)
@@ -52,7 +55,7 @@
             throw new NotImplementedException();
         }
 
-        public void FindSelector(Selector s)
+        public Selector FindSelector(Selector s)
         {
             throw new NotImplementedException();
         }
@@ -67,23 +70,26 @@
             throw new NotImplementedException();
         }
 
-        public void RegenerateIds()
-        {
-            throw new NotImplementedException();
+        public void RegenerateIds(){
+            id = Guid.NewGuid();
+            //Debug.Log(id);
         }
+
 
         /// <summary>
         /// Selects the action for execution.
         /// </summary>
         /// <returns>The select.</returns>
         /// <param name="context">Context.</param>
-        public IAction Select(IContext context)
+        public IAction Select(IAIContext context)
         {
             List<IQualifier> qualifiers = rootSelector.qualifiers;
-            IQualifier winner = rootSelector.Select(context, qualifiers);
+            IDefaultQualifier defaultQualifier = rootSelector.defaultQualifier;
+            IQualifier winner = rootSelector.Select(context, qualifiers, defaultQualifier);
 
             CompositeQualifier cq = winner as CompositeQualifier;
-            float score = cq.Score(context, cq.scorers);
+            // TODO:  What if there are no scoreres?
+            //float score = cq.Score(context, cq.scorers);
             IAction action = winner.action;
 
 

@@ -8,7 +8,7 @@
     public abstract class ScorerOptionBase<TOption> : IOptionScorer<TOption>
     {
 
-        public abstract float Score(IContext context, TOption data);
+        public abstract float Score(IAIContext context, TOption data);
 
     }
 

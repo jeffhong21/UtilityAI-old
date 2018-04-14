@@ -12,7 +12,7 @@
     /// Represents knowledge that the AI uses to do what it needs to do.
     /// </summary>
     [Serializable]
-    public class AIContext : IContext
+    public class AIContext : IAIContext
     {
 
         //[SerializeField]
@@ -35,6 +35,8 @@
         public List<Vector3> sampledPositions{ get; private set; }
 
 
+        private List<GameObject> _entityObservations = new List<GameObject>();
+        public List<GameObject> entityObservations { get { return _entityObservations; } private set { _entityObservations = value; } }
 
 
         public AIContext(NpcController entity)

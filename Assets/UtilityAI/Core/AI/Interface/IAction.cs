@@ -3,9 +3,9 @@
     
     public interface IAction
     {
-        UtilityAIComponent utilityAIComponent {get; set;}
+        TaskNetworkComponent utilityAIComponent {get; set;}
         ActionStatus actionStatus { get;  }
         void EndAction();
-        void ExecuteAction(IContext context);
+        void ExecuteAction(IAIContext context);
     }
 }

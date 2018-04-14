@@ -10,7 +10,7 @@
     {
         bool isDisabled { get; set; }
         IAction action { get; set; }
-        float Score(IContext context);
+        float Score(IAIContext context);
         float _score { get;  }
     }
 }

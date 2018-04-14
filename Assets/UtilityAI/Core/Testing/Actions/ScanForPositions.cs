@@ -16,7 +16,7 @@
 
 
 
-        protected override void Execute(IContext context)
+        protected override void Execute(IAIContext context)
         {
             //Debug.Log(string.Format("Executing action:  {0}", this.GetType().Name));
             //Debug.Log(string.Format("Updating {0}", this.GetType().Name));

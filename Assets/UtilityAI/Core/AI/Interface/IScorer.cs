@@ -3,6 +3,6 @@
 
     public interface IScorer
     {
-        float Score(IContext context);
+        float Score(IAIContext context);
     }
 }

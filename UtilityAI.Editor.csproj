@@ -292,11 +292,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\UtilityAI\Core\Editor\_old\SelectorOptionsDrawer.cs" />
+    <Compile Include="Assets\UtilityAI\Core\Editor\_old\TaskNetworkConstructor.cs" />
     <Compile Include="Assets\UtilityAI\Core\Editor\_old\UtilityAIDrawers.cs" />
     <Compile Include="Assets\UtilityAI\Core\Editor\_old\UtilityAIEditor.cs" />
-    <Compile Include="Assets\UtilityAI\Core\Editor\Serialization.cs" />
+    <Compile Include="Assets\UtilityAI\Core\Editor\InspectorUtility.cs" />
     <Compile Include="Assets\UtilityAI\Core\Editor\SerializationExtensions.cs" />
-    <Compile Include="Assets\UtilityAI\Core\Editor\UtilityAIComponentEditor.cs" />
+    <Compile Include="Assets\UtilityAI\Core\Editor\TaskNetworkAttributeDrawer.cs" />
+    <Compile Include="Assets\UtilityAI\Core\Editor\TaskNetworkEditor.cs" />
+    <Compile Include="Assets\UtilityAI\Core\Editor\TaskNetworkEditorUtilities.cs" />
+    <Compile Include="Assets\UtilityAI\Core\Editor\TaskNetworkOptionsWindow.cs" />
+    <Compile Include="Assets\UtilityAI\NodeEditor\Editor\NodeBasedEditor.cs" />
     <Compile Include="Assets\UtilityAI\Resources\Editor\DisplayIcons\BuiltInResourcesWindow.cs" />
     <Compile Include="Assets\UtilityAI\Resources\Editor\DisplayIcons\EditorIconViewer.cs" />
     <Compile Include="Assets\UtilityAI\Resources\Editor\DisplayIcons\EditorStylesExample.cs" />

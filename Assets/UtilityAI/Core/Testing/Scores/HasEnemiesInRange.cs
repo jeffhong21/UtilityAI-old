@@ -10,7 +10,7 @@
         public float range = 10f;  //  entites within this range
 
 
-        public override float Score(IContext context)
+        public override float Score(IAIContext context)
         {
             var c = (AIContext)context;
 

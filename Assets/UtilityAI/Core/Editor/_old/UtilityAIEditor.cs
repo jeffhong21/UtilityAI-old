@@ -8,7 +8,7 @@
 //    using UnityEditorInternal;
 
 
-//    [CustomEditor(typeof(UtilityAIComponent))]
+//    [CustomEditor(typeof(TaskNetworkComponent))]
 //    public class UtilityAIEditor : Editor
 //    {
 //        public static string nameID_fieldName = "nameID";
@@ -18,7 +18,7 @@
 //        public static string isSelected_fieldName = "isSelected";
 
 
-//        private UtilityAIComponent utilityAIComponent;
+//        private TaskNetworkComponent utilityAIComponent;
 //        private List<SerializedObject> soUtilityAI = new List<SerializedObject>();
 
 //        private List<string> utilityAIOptions = new List<string>();
@@ -30,7 +30,7 @@
 //            if (target == null) 
 //                return;
             
-//            utilityAIComponent = (UtilityAIComponent)target;
+//            utilityAIComponent = (TaskNetworkComponent)target;
 
 //            soUtilityAI.Clear();
 //            utilityAIOptions.Clear();
@@ -182,16 +182,16 @@
 //        ChangeType
 //    }
 
-//    public class OptionTypesWindow : EditorWindow // where T : class
+//    public class TaskNetworkOptionsWindow : EditorWindow // where T : class
 //    {
-//        OptionTypesWindow window;
+//        TaskNetworkOptionsWindow window;
 //        OptionWindowType windowType;
 //        SerializedProperty property;
 //        List<Type> availibleTypes = new List<Type>();
 //        Type optionType;      
 
 
-//        public void Init(OptionTypesWindow window, Type type, SerializedProperty property, OptionWindowType windowType)
+//        public void Init(TaskNetworkOptionsWindow window, Type type, SerializedProperty property, OptionWindowType windowType)
 //        {
 //            this.window = window;
 //            this.window.titleContent = new GUIContent(type.Name + " Search");
@@ -250,50 +250,50 @@
 
 
 
-//    public static class Styles
-//    {
-//        public static GUIStyle headerStyle;
-//        public static GUIStyle defaultTextStyle;
+//    //public static class Styles
+//    //{
+//    //    public static GUIStyle headerStyle;
+//    //    public static GUIStyle defaultTextStyle;
 
-//        public static GUIStyle selectorContainerStyle;
-
-
-//        public static Texture changeElementIcon;
-//        public static Texture deleteElementIcon;
-//        public static Texture childIcon;
+//    //    public static GUIStyle selectorContainerStyle;
 
 
-//        public static float lineHeight;
-//        public static float lineHeightSpace;
+//    //    public static Texture changeElementIcon;
+//    //    public static Texture deleteElementIcon;
+//    //    public static Texture childIcon;
+
+
+//    //    public static float lineHeight;
+//    //    public static float lineHeightSpace;
 
 
 
-//        static Styles()
-//        {
-//            headerStyle = new GUIStyle(); //new GUIStyle(EditorStyles.toolbar);  "ShurikenModuleTitle"
-//            headerStyle.fontStyle = FontStyle.Bold;
-//            headerStyle.alignment = TextAnchor.MiddleLeft;
-//            headerStyle.fontSize = 12;
+//    //    static Styles()
+//    //    {
+//    //        headerStyle = new GUIStyle(); //new GUIStyle(EditorStyles.toolbar);  "ShurikenModuleTitle"
+//    //        headerStyle.fontStyle = FontStyle.Bold;
+//    //        headerStyle.alignment = TextAnchor.MiddleLeft;
+//    //        headerStyle.fontSize = 12;
 
-//            defaultTextStyle = new GUIStyle();
-//            defaultTextStyle.fontStyle = FontStyle.Bold;
+//    //        defaultTextStyle = new GUIStyle();
+//    //        defaultTextStyle.fontStyle = FontStyle.Bold;
 
-//            selectorContainerStyle = new GUIStyle();
-//            selectorContainerStyle.normal.background = EditorGUIUtility.Load("ShurikenModuleBg") as Texture2D;
-//            selectorContainerStyle.border = new RectOffset(6, 3, 3, 6);
-
-
-//            changeElementIcon = EditorGUIUtility.IconContent("Toolbar Plus").image;
-//            deleteElementIcon = EditorGUIUtility.IconContent("Toolbar Minus").image;
-
-//            childIcon = EditorGUIUtility.IconContent("IN RenderLayer").image;   // HierarchyTreeMiddle     IN RenderLayer - this is the L shape parent to child icon
+//    //        selectorContainerStyle = new GUIStyle();
+//    //        selectorContainerStyle.normal.background = EditorGUIUtility.Load("ShurikenModuleBg") as Texture2D;
+//    //        selectorContainerStyle.border = new RectOffset(6, 3, 3, 6);
 
 
-//            lineHeight = EditorGUIUtility.singleLineHeight;
-//            lineHeightSpace = lineHeight + 10;
-//        }
+//    //        changeElementIcon = EditorGUIUtility.IconContent("Toolbar Plus").image;
+//    //        deleteElementIcon = EditorGUIUtility.IconContent("Toolbar Minus").image;
 
-//    }
+//    //        childIcon = EditorGUIUtility.IconContent("IN RenderLayer").image;   // HierarchyTreeMiddle     IN RenderLayer - this is the L shape parent to child icon
+
+
+//    //        lineHeight = EditorGUIUtility.singleLineHeight;
+//    //        lineHeightSpace = lineHeight + 10;
+//    //    }
+
+//    //}
 
 
 

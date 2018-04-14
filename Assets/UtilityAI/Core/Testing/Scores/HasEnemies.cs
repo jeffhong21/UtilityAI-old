@@ -8,13 +8,13 @@
         public float score = 25;
 
 
-        public override float Score(IContext context)
+        public override float Score(IAIContext context)
         {
             var c = (AIContext)context;
 
             if (c.enemies.Count == 0)
             {
-                Debug.Log("No enemies");
+                //Debug.Log("No enemies");
                 return 0f;
             }
 

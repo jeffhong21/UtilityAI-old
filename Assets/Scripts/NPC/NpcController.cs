@@ -15,7 +15,7 @@
 		//private NpcShoot npcShoot;
 		//private NpcMovement npcMove;
 		//  AI
-        private UtilityAIComponent npcAI;
+        private TaskNetworkComponent npcAI;
 
 		void Awake()
 		{
@@ -23,7 +23,7 @@
 			//npcHealth = this.GetComponent<NpcHealth>();
 			//npcShoot = this.GetComponent<NpcShoot>();
 			//npcMove = this.GetComponent<NpcMovement>();
-            npcAI = this.GetComponent<UtilityAIComponent>();
+            npcAI = this.GetComponent<TaskNetworkComponent>();
 		}
 
 		void OnEnable(){

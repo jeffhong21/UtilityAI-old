@@ -22,8 +22,8 @@
 
 
 
-        public IContext GetContext(){
-            return _context as IContext;
+        public IAIContext GetContext(){
+            return _context as IAIContext;
         }
 
 

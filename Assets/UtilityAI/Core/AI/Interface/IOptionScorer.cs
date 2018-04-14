@@ -5,6 +5,6 @@
         //IQualifier Qualifier { get; }
 
         //IQualifierCollection Collection { get;  }
-        float Score(IContext context, TOption data);
+        float Score(IAIContext context, TOption data);
     }
 }

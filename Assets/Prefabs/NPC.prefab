@@ -39,11 +39,9 @@ GameObject:
   - component: {fileID: 136027588193680870}
   - component: {fileID: 54918467602518928}
   - component: {fileID: 195063876441933296}
-  - component: {fileID: 114298895390773100}
-  - component: {fileID: 114906483873831602}
   - component: {fileID: 114541039400208912}
   - component: {fileID: 114460860694152824}
-  - component: {fileID: 114693930265666734}
+  - component: {fileID: 114154432466180726}
   m_Layer: 0
   m_Name: NPC
   m_TagString: Untagged
@@ -134,7 +132,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &114298895390773100
+--- !u!114 &114154432466180726
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -142,9 +140,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1800250705246292}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f5c79fe56dc48868b088ef9fc18967, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b5cd3d809d064004b75a66de9fde05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clients: []
+  initializeWithTestAI: 0
+  debugNextIntervalTime: 0
 --- !u!114 &114460860694152824
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -162,26 +163,25 @@ MonoBehaviour:
       m_Bits: 0
     waypoints: []
     enemies: []
-  _module:
-    viewAngle: 54
+  _perception:
+    viewAngle: 108
     sightRange: 20
-    rangeAttackRange: 20
     requiredDetectionCount: 15
     sightRangeMultiplier: 1.5
-    mySightLayers:
+    sightLayer:
       serializedVersion: 2
-      m_Bits: 0
-    myObstacleLayer:
+      m_Bits: 768
+    obstaclesLayer:
       serializedVersion: 2
-      m_Bits: 0
-    myEnemyLayers:
+      m_Bits: 256
+    hostileLayer:
       serializedVersion: 2
-      m_Bits: 0
-    myFriendlyLayers:
+      m_Bits: 512
+    friendlyLayer:
       serializedVersion: 2
-      m_Bits: 0
-    myEnemyTags: []
-    myFriendlyTags: []
+      m_Bits: 512
+    hostileTags: []
+    friendlyTags: []
 --- !u!114 &114541039400208912
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -193,34 +193,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03d5600c032cc4af2b7959d6b0ee4827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114693930265666734
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1800250705246292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da799bac6f0e7432d83cef96740cd66e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ai:
-  - {fileID: 0}
-  debugNextIntervalTime: 0
-  debugNavMesh: 0
-  showCustomInspector: 0
---- !u!114 &114906483873831602
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1800250705246292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd9daada1a5f344b8b4de4d6dae30420, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gizmoAlpha: 1
 --- !u!136 &136027588193680870
 CapsuleCollider:
   m_ObjectHideFlags: 1

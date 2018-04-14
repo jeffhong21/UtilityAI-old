@@ -12,7 +12,7 @@
         public float desiredRange = 20;
 
 
-        public override float Score(IContext context, Vector3 position)
+        public override float Score(IAIContext context, Vector3 position)
         {
             var c = context as AIContext;
 

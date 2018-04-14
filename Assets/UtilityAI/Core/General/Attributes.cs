@@ -15,6 +15,27 @@ namespace UtilityAI
     }
 
 
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class FriendlyNameAttribute : PropertyAttribute
+    {
+        public string name { get; private set; }
+        public string description { get; set; }
+        public int sortOrder { get; set; }
+
+
+        public FriendlyNameAttribute(string name){
+            this.name = name;
+        }
+
+        public FriendlyNameAttribute(string name, string description){
+            this.name = name;
+            this.description = description;
+        }
+
+    }
+
+
+
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true)]
     public class AISerializationAttribute : Attribute
     {
@@ -51,6 +72,7 @@ namespace UtilityAI
         }
 
     }
+
 
 
 

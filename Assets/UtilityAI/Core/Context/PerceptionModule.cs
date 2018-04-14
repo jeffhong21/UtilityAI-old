@@ -1,4 +1,4 @@
-namespace UtilityAI
+﻿namespace UtilityAI
 {
     using UnityEngine;
     using UnityEngine.AI;
@@ -7,10 +7,6 @@ namespace UtilityAI
     using System.Collections.Generic;
 
 
-    public interface IModule
-    {
-        
-    }
 
 
     [Serializable]
@@ -19,38 +15,60 @@ namespace UtilityAI
         [Header("Detection Information")]
         public float viewAngle = 108f;
         public float sightRange = 20;                           //  How far can the enemy see.
-        public float rangeAttackRange = 20;
         public int requiredDetectionCount = 15;
         public float sightRangeMultiplier = 1.5f;
 
 
         [Header("Agent Sight Infornation")]
         [Tooltip("What can the npc see.  Set this to everything except raycast, UI, etc.")]
-        public LayerMask mySightLayers;
+        public LayerMask sightLayer;
         [Tooltip("If Physics.Linecast hits anything in this LayerMask.  Set it as obstacles.")]
-        public LayerMask myObstacleLayer;
+        public LayerMask obstaclesLayer;
         [Tooltip("What layers are considered the agents enemies.")]
-        public LayerMask myEnemyLayers;
+        public LayerMask hostileLayer;
         [Tooltip("What layers are considered the agents friendlies.")]
-        public LayerMask myFriendlyLayers;
+        public LayerMask friendlyLayer;
 
-        public string[] myEnemyTags;
-        public string[] myFriendlyTags;
-
-
+        public string[] hostileTags;
+        public string[] friendlyTags;
 
 
-        private UtilityAIComponent utilityAIComponent;
+
+
+        private TaskNetworkComponent utilityAIComponent;
         private GameObject entity;
         private Transform sensor;
 
 
-        public void InitializePerceptionModule(UtilityAIComponent uai)
+        public void InitializePerceptionModule(TaskNetworkComponent uai)
 		{
             utilityAIComponent = uai;
             entity = uai.gameObject;
             sensor = entity.transform;
 		}
+
+
+        //  Set Location Of Interest.
+        public void ScanForTargets()
+        {
+            var colliders = Physics.OverlapSphere(entity.transform.position, sightRange, hostileLayer);
+
+            foreach (Collider col in colliders)
+            {
+                RaycastHit hit;
+                Transform target = col.transform;
+
+                if (CanSeeTarget(target)){
+                    foreach (string tags in hostileTags){
+                        if (target.transform.CompareTag(tags)){
+                            //Debug.DrawLine(npcSight.headPosition, npcSight.targetPosition, Color.red);
+                            return;
+                        }
+                    }
+                }
+            }
+
+        }
 
 
 
@@ -64,12 +82,34 @@ namespace UtilityAI
 
             if (Vector3.Distance(sensor.position, targetPosition) < sightRange &&
 		        angleBetweenNpcAndPlayer < viewAngle / 2f &&
-                Physics.Linecast(entity.transform.position, target.position, myObstacleLayer) == false)
+                Physics.Linecast(entity.transform.position, target.position, obstaclesLayer) == false)
 		    {
 		        return true;
 		    }
 		    return false;
 		}
+
+
+        ////  Calculates if npc can see target.
+        //public bool CanSeeTarget(IAIContext context, Transform target)
+        //{
+        //    var aiContext = context as AIContext;
+        //    var entity = aiContext.entity;
+
+        //    var targetPosition = new Vector3(target.position.x, (target.position.y + sensor.position.y), target.position.z);
+        //    var dirToPlayer = (target.position - entity.transform.position).normalized;
+
+        //    var angleBetweenNpcAndPlayer = Vector3.Angle(entity.transform.forward, dirToPlayer);
+
+        //    if (Vector3.Distance(sensor.position, targetPosition) < sightRange &&
+        //        angleBetweenNpcAndPlayer < viewAngle / 2f &&
+        //        Physics.Linecast(entity.transform.position, target.position, obstaclesLayer) == false)
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
+
 
 
         //  Get direction from angle.
@@ -135,16 +175,6 @@ namespace UtilityAI
         //    }
         //    return targetPosition;
         //}
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -11,7 +11,7 @@
     {
 
 
-        protected override void Execute(IContext context)
+        protected override void Execute(IAIContext context)
         {
             var c = (AIContext)context;
 

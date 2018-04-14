@@ -6,7 +6,7 @@
 	{
 
 
-        public override float Score(IContext context)
+        public override float Score(IAIContext context)
         {
             return Random.Range(0, 10);
         }

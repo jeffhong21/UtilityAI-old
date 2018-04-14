@@ -3,7 +3,7 @@
 
     public interface IContextProvider 
     { 
-        IContext GetContext();
+        IAIContext GetContext();
 
     }
 

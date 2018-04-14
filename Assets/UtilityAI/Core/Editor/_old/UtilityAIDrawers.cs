@@ -24,7 +24,7 @@
 
 //        public static void ShowOptionsTypeWindow(Type type, SerializedProperty property, OptionWindowType windowType)
 //        {
-//            OptionTypesWindow window = new OptionTypesWindow();
+//            TaskNetworkOptionsWindow window = new TaskNetworkOptionsWindow();
 //            window.Init(window, type, property, windowType);
 
 //        }

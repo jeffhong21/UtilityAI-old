@@ -11,7 +11,7 @@
         float _distance;
 
 
-        protected override void Execute(IContext context)
+        protected override void Execute(IAIContext context)
         {
             AIContext c = context as AIContext;
             NavMeshAgent navMeshAgent = c.entity.GetComponent<NavMeshAgent>();

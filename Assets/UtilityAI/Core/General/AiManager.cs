@@ -1,4 +1,4 @@
-namespace UtilityAI
+﻿namespace UtilityAI
 {
     using UnityEngine;
     using System;
@@ -35,8 +35,8 @@ namespace UtilityAI
         ///</summary>
         ///<param name = "id" > The ID.</param>
         ///<returns> The AI with the specified ID, or null if no match is found.</returns>
-        public static UtilityAIComponent GetAI(string id){
-            UtilityAIComponent ai = null;
+        public static TaskNetworkComponent GetAI(string id){
+            TaskNetworkComponent ai = null;
 
             return ai;
         }
@@ -48,7 +48,7 @@ namespace UtilityAI
         //<param name = "id" > The AI ID.</param>
         //<param name = "context" > The context.</param>
         //<returns><c>true</c> if the AI was found and executed; otherwise<c>false</c>.</returns>
-        public static bool ExecuteAI(string id, IContext context){
+        public static bool ExecuteAI(string id, IAIContext context){
             return true;
         }
 

@@ -13,8 +13,8 @@
         public bool isDisabled { get; set; }
         public IAction action { get; set; }
 
-
         public float _score { get; protected set; }
+
         public int CompareTo(IQualifier other)
         {
             //  Current instance is greater than object being compared too.
@@ -25,12 +25,55 @@
         }
 
         //  Generates a score from all Scorers.
-        public abstract float Score(IContext context);
+        public abstract float Score(IAIContext context);
 
 
 
 
     }
 
+    /// <summary>
+    /// Relies on contextual scorer to produce score.  Relies on all its Scorers combined scores to be above the Threshold in which it returns the combined score.  
+    /// If below the Threshhold, it returns 0.
+    /// </summary>
+    public class Q_AllOrNothing : QualifierBase
+    {
+        [SerializeField]
+        public float threshold;
 
+        public override float Score(IAIContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    /// <summary>
+    /// Simply has a fixed score.  So whatever score is set, it will always return that score.
+    /// </summary>
+    public class Q_FixedScore : QualifierBase
+    {
+        [SerializeField]
+        public float score;
+
+        public override float Score(IAIContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    /// <summary>
+    /// Q sum while above threshhold.
+    /// </summary>
+    public class Q_SumWhileAboveThreshhold : QualifierBase
+    {
+        [SerializeField]
+        public float sum;
+
+        public override float Score(IAIContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

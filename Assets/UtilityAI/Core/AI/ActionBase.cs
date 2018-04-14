@@ -16,11 +16,11 @@
     [AICategory("ActionBase")]
     public abstract class ActionBase : IAction
     {
-        public UtilityAIComponent utilityAIComponent {get; set;} //  So it can start coroutine
+        public TaskNetworkComponent utilityAIComponent {get; set;} //  So it can start coroutine
         public ActionStatus actionStatus { get; protected set; }
 
 
-        protected abstract void Execute(IContext context);
+        protected abstract void Execute(IAIContext context);
 
         public void EndAction(){
             //Debug.Log("Ending Action");
@@ -31,7 +31,7 @@
         }
 
 
-        public void ExecuteAction(IContext context)
+        public void ExecuteAction(IAIContext context)
         {
             //  TODO: Maybe add some check to see if action can be executed.
             actionStatus = ActionStatus.Running;
@@ -62,7 +62,7 @@
 
     //public abstract class ActionBase<TContext> : IAction
     //{
-    //    public UtilityAIComponent utilityAIComponent { get;  set; }
+    //    public TaskNetworkComponent utilityAIComponent { get;  set; }
 
     //    /// <summary>
     //    /// Execute methode for custom Context type.
@@ -74,7 +74,7 @@
     //    /// Default execute for generic context.
     //    /// </summary>
     //    /// <param name="context"></param>
-    //    public virtual void Execute(IContext context){
+    //    public virtual void Execute(IAIContext context){
             
     //    }
     //}

@@ -3,7 +3,7 @@
     using UnityEngine;
     using System;
     using System.Collections.Generic;
-
+    //using System.Diagnostics;
 
 
     /// <summary>
@@ -11,14 +11,23 @@
     ///   Selector Gets the Highest Score from the list of qualifiers.
     ///   It needs to know all qualifiers attached to it.
     /// </summary>
+    //[DebuggerDisplay("qualifiers = {qualifiers}")]
     public abstract class Selector
     {
-        private int _id;
-        private List<IQualifier> _qualifiers;
-        private IDefaultQualifier _defaultQualifier;
+        protected string _displayName;
+        protected Guid _id;
+        protected List<IQualifier> _qualifiers;
+        protected IDefaultQualifier _defaultQualifier;
 
         //  Gets the id of this selector.
-        public int id
+        public string displayName
+        {
+            get { return _displayName; }
+            set { _displayName = value; }
+        }
+
+        //  Gets the id of this selector.
+        public Guid id
         {
             get { return _id; }
             set { _id = value; }
@@ -50,7 +59,7 @@
         /// </summary>
         /// <returns>The action to execute.</returns>
         /// <param name="context">Context.</param>
-        public virtual IAction Select(IContext context)
+        public virtual IAction Select(IAIContext context)
         {
             throw new NotImplementedException();
         }
@@ -58,13 +67,12 @@
         /// <summary>
         ///   This function selects the best score from a list of qualifiers.
         /// </summary>
-        public abstract IQualifier Select(IContext context, List<IQualifier> qualifiers);
-        //public abstract IQualifier Select(IContext context, List<IQualifier> qualifiers, IDefaultQualifier defaultQualifier);
+        public abstract IQualifier Select(IAIContext context, List<IQualifier> qualifiers, IDefaultQualifier defaultQualifier);
+        //public abstract IQualifier Select(IAIContext context, List<IQualifier> qualifiers, IDefaultQualifier defaultQualifier);
 
 
-        protected void RegenerateId()
-        {
-            
+        protected void RegenerateId(){
+            id = Guid.NewGuid();
         }
 
 
@@ -75,6 +83,7 @@
         {
             //Debug.Log(string.Format("Selector:  {0} : Abstract Constructor Message", this.GetType().Name));
             defaultQualifier = new DefaultQualifier();
+            RegenerateId();
         }
 
 
@@ -89,17 +98,25 @@
     /// <summary>
     ///   Selector Gets the Highest Score from the list of qualifiers.
     /// </summary>
+    [Serializable]
+    [FriendlyName("Score Selector")]
     public class ScoreSelector : Selector
     {
         
-        public override IQualifier Select(IContext context, List<IQualifier> qualifiers)  //  Need default qualifier.  Final return value should be default Qualifier.
+        public ScoreSelector() : base() 
+        {
+            displayName = "ScoreSelector";
+        }
+
+
+        public override IQualifier Select(IAIContext context, List<IQualifier> qualifiers, IDefaultQualifier defaultQualifier)  //  Need default qualifier.  Final return value should be default Qualifier.
         {
             List<IQualifier> qList = new List<IQualifier>(qualifiers);
-
+            if (qList.Count == 0)
+                return defaultQualifier as IQualifier;
 
             //  Get score for all qualifiers
-            for (int index = 0; index < qList.Count; index++)
-            {
+            for (int index = 0; index < qList.Count; index++){
                 CompositeQualifier q = qList[index] as CompositeQualifier;
                 var score = q.Score(context, q.scorers);
             }
@@ -108,6 +125,8 @@
             qList.Sort();   //  Sorts in accending order.
             qList.Reverse();//  Sorts in decending order.
             var best = qList[0];
+
+
 
             //DebugSelectorWinner(context, qList);
             return best;
@@ -119,7 +138,7 @@
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="qualifiers">Qualifiers.</param>
-        private void DebugSelectorWinner(IContext context, List<IQualifier> qualifiers)
+        private void DebugSelectorWinner(IAIContext context, List<IQualifier> qualifiers)
         {
             var winnerInfo = "";
 
