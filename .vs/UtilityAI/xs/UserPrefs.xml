@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{5A6D36D9-6A32-0D56-BD7C-975C39BDAFAD}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/UtilityAI/Core/Editor/TaskNetworkEditor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/UtilityAI/Core/Misc/Visualizer/PositionScoreVisualizer.cs">
     <Files>
-      <File FileName="Assets/UtilityAI/Core/Editor/TaskNetworkEditor.cs" Line="196" Column="31" />
+      <File FileName="Assets/UtilityAI/Core/Misc/Visualizer/PositionScoreVisualizer.cs" Line="69" Column="35" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

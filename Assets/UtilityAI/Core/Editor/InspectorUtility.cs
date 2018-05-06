@@ -8,163 +8,180 @@
     using UnityEditorInternal;
 
 
-    [Serializable]
-    public class ContainerNode
+    /// <summary>
+    /// Utility for creating various UI controls
+    /// </summary>
+    public static class InspectorUtility
     {
-        //  Name of the node.
-        public string name { get; set; }
-        //  e.g. Qualifier should know its parent is a Selector, or a Scorer's is a Qualifier.
-        public string parent { get; protected set; }
-        //  Elements would be fields and properties.
-        public object[] elements;
-        //  Items would be a list of Scorers for a Qualifier for example.
-        public Type[] items;
+        public static GUIContent DeleteContent;
+        public static GUIContent ChangeContent;
+        public static GUIContent AddContent;
 
-        //<summary>
-        //Removes the element from its parent.If not parented nothing will happen.
-        //</summary>
-        public void Remove() { }
-
-        public ContainerNode(string name) { }
-
-        public ContainerNode(string name, object[] items) { }
+        static readonly float miniBtnWidth;
+        static readonly float miniBtnHeight;
 
 
-    }
-
-
-
-
-    #region AI blocks
-
-    public class Container
-    {
-        Element[] qualifierNodes;
-    }
-
-    public class Element
-    {
-        QualifierNode qualifierNode;
-        ActionNode actionNode;
-    }
-
-
-    public class SelectorNode
-    {
-        public List<IQualifier> qualifiers;
-        public IDefaultQualifier defaultQualifier;
-    }
-
-    public class QualifierNode
-    {
-        public IAction action;
-    }
-
-    public class CompositeQualifierNode : QualifierNode
-    {
-        public List<IScorer> scorers;
-    }
-
-
-    public class DefaultQualiferNode : QualifierNode
-    {
-    }
-
-    public class ActionNode
-    {
-    }
-
-    public class ActionSequenceNode : ActionNode
-    {
-        //  Action Sequence
-        public List<IAction> actions;  
-    }
-
-    public class ActionWithOptionNode<TOption> : ActionNode
-    {
-        public List<IOptionScorer<TOption>> scorers;
-    }
-
-
-
-    public class ScorerNode
-    {
-
-    }
-
-
-    #endregion
-
-
-
-
-
-
-
-
-    [Serializable]
-    public class StageItem
-    {
-        public StageItem(string name)
+        static InspectorUtility()
         {
-        }
+            DeleteContent = new GUIContent(Icons.DeleteIcon, "<Tooltip> Remove option content");
+            ChangeContent = new GUIContent(Icons.ChangeIcon, "<Tooltip> Change options content");
+            AddContent = new GUIContent(Icons.AddIcon, "<Tooltip> Add new options content");
 
-        //<summary>
-        //Removes the element from its parent.If not parented nothing will happen.
-        //</summary>
-        public void Remove() { }
-
-        public string name { get; set; }
-        public string parent { get; protected set; }
-
-    }
-
-    [Serializable]
-    public class StageElement
-    {
-        object[] elements;
-        object[] items;
-
-        public StageElement(string name) { }
-
-
-        public StageElement(string name, object[] items) { }
-
-        /// <summary>
-        /// Gets all child items with the specified name.
-        /// </summary>
-        public StageItem[] Items(string name){
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Gets all child elements with the specified name.
-        /// </summary>
-        public StageItem[] Elements(string name){
-            throw new NotImplementedException();
+            miniBtnWidth = 28f;
+            miniBtnHeight = EditorGUIUtility.singleLineHeight + 2f;
         }
 
 
-        /// <summary>
-        /// Returns all descendant items
-        /// </summary>
-        public StageItem[] Descendants(string name){
-            throw new NotImplementedException();
-        }
 
         /// <summary>
-        /// Returns all descendants of type.
+        /// Small square mini button with icon
         /// </summary>
+        /// <returns><c>true</c>, if popup button was optionsed, <c>false</c> otherwise.</returns>
+        /// <param name="content">Content.</param>
+        public static bool OptionsPopupButton(GUIContent content)
+        {
+            bool clicked;
+            clicked = GUILayout.Button(content, EditorStyles.miniButton, GUILayout.Width(miniBtnWidth), GUILayout.Height(miniBtnHeight) );
+            //clicked = GUILayout.Button(content, new GUIStyle(GUI.skin.button), GUILayout.Width(miniBtnWidth), GUILayout.Height(miniBtnHeight));
+            return clicked;
+        }
+
+
+        public static string DescriptionField(string description, int lines = 3)
+        {
+            EditorGUILayout.LabelField("Description");
+            description = EditorGUILayout.TextArea(description, GUILayout.Height((EditorGUIUtility.singleLineHeight + 2) * lines));
+            EditorGUILayout.Space();
+
+            return description;
+        }
+
+        public static string NameField(string name){
+            name = EditorGUILayout.DelayedTextField("Name: ", name);
+            return name;
+        }
+
+
+
+        public static void HandleReorderableList(ReorderableList list)
+        {
+            list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
+                var element = list.list[index];
+                EditorGUI.LabelField(rect, new GUIContent(element.GetType().Name));
+
+                if (GUI.Button(new Rect(rect.x + rect.width - 18, rect.y, 18, EditorGUIUtility.singleLineHeight), new GUIContent(EditorGUIUtility.IconContent("Toolbar Minus").image), GUIStyle.none))
+                {
+                    list.list.RemoveAt(index);
+                }
+            };
+
+            list.onSelectCallback = (ReorderableList l) =>
+            {
+
+            };
+        }
+
+
+
+
+        /// <summary>
+        /// Shows the options window.
+        /// </summary>
+        /// <param name="editor">Editor.</param>
+        /// <param name="optionType">Option type.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public void Descendants<T>() { }
+        public static void ShowOptionsWindow<T>(TaskNetworkEditor editor, Type optionType = null) where T : OptionsWindow<T>, new()
+        {
+            T window = new T();
+            if (optionType == null)
+                window.Init(window, editor);
+            else
+                window.Init(window, editor, optionType);
+        }
 
 
-        public void Add(object item) { }
+        public static UtilityAIAsset[] GetAllClients()
+        {
+            string filterType = "t:UtilityAIAsset";
+            var aiAssets = new List<UtilityAIAsset>();
+
+            foreach (var guid in AssetDatabase.FindAssets(filterType)){
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                UtilityAIAsset aiAsset = AssetDatabase.LoadMainAssetAtPath(assetPath) as UtilityAIAsset;
+                aiAssets.Add(aiAsset);
+            }
+            return aiAssets.ToArray();
+        }
+
+
+
     }
 
 
 
+    public static class Icons
+    {
+        public static Texture2D DeleteIcon;
+        public static Texture2D ChangeIcon;
+        public static Texture2D AddIcon;
 
+        static Icons()
+        {
+            DeleteIcon = EditorGUIUtility.IconContent("Toolbar Minus").image as Texture2D;
+            ChangeIcon = EditorGUIUtility.IconContent("preAudioLoopOff").image as Texture2D;
+            AddIcon = EditorGUIUtility.IconContent("Toolbar Plus").image as Texture2D;
+        }
+    }
+
+
+
+    public static class Styles
+    {
+        //  Node Styles.
+        public static GUIStyle defaultNodeStyle;
+
+        //  Text Styles.
+        public static GUIStyle TextCenterStyle;
+        public static GUIStyle DebugTextStyle;
+        //  Node Style
+        public static GUIStyle nodeStyle;
+        public static GUIStyle selectedNodeStyle;
+
+        static Styles()
+        {
+
+            defaultNodeStyle = new GUIStyle{
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleLeft,
+                contentOffset = new Vector2(25, -3)
+            };
+
+
+            TextCenterStyle = new GUIStyle{
+                alignment = TextAnchor.MiddleCenter
+            };
+
+            DebugTextStyle = new GUIStyle
+            {
+                richText = true
+            };
+
+
+            nodeStyle = new GUIStyle("TL SelectionButton PreDropGlow")
+            {
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleLeft,
+            };
+
+            selectedNodeStyle = new GUIStyle("TL SelectionButton PreDropGlow")
+            {
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleLeft,
+            };
+
+
+        }
+    }
 
 
 }

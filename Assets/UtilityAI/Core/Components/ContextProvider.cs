@@ -5,7 +5,7 @@
     using Bang;
 
 
-
+    [RequireComponent(typeof(NpcController))]
     public class ContextProvider : MonoBehaviour, IContextProvider
     {
 

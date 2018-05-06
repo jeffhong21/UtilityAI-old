@@ -125,7 +125,9 @@
             IAction newAction = ai.Select(context);
             if (currentAction != newAction){
                 currentAction = newAction;
-                currentAction.utilityAIComponent = taskNetwork;
+
+                //currentAction.utilityAIComponent = taskNetwork;
+
                 //if (ActionSelected != null){
                 //    ActionSelected(context, ai.rootSelector.qualifiers);
                 //    Debug.Log(ai.name + " just pinged debugger");

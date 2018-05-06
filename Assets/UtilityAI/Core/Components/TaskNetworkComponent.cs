@@ -15,6 +15,7 @@
     {
 
         public List<UtilityAIClient> clients = new List<UtilityAIClient>();
+        public List<UtilityAIAsset> assets = new List<UtilityAIAsset>();
         public IContextProvider contextProvider { get; private set; }
         public IAIContext context { get; private set; }
 

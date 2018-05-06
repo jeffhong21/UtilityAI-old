@@ -6,117 +6,215 @@
     using System.Collections.Generic;
     using System.IO;
 
+    #region Original UtilityAI
+  //  [Serializable]
+  //  public class UtilityAIAsset : ScriptableObject
+  //  {
+  //      public string friendlyName;
+  //      [Multiline]
+  //      public string description;
+  //      [ShowOnly]
+  //      public float version = 1.0f;
+  //      public string aiId;
+
+  //      public UtilityAI configuration;
+  //      public string editorConfiguration;
+
+  //      ///<summary>
+  //      ///Creates an instance for the specified AI.
+  //      ///</summary>
+  //      ///<param name = "aiId" > The name of the ai that gets registered.</param>
+  //      ///<param name = "aiName" > Name of the asset file.</param>
+  //      ///<returns></returns>
+  //      public UtilityAIAsset CreateAsset(string aiId, string aiName, bool isMockAI = false)
+  //      {
+  //          string dir = AiManager.StorageFolder;
+  //          string assetDir = AssetDatabase.GenerateUniqueAssetPath(dir + "/" + aiName + ".asset");
+  //          aiName = Path.GetFileNameWithoutExtension(assetDir);
+
+  //          UtilityAIAsset asset = ScriptableObject.CreateInstance<UtilityAIAsset>();
+  //          asset.friendlyName = aiName;
+  //          asset.aiId = aiId;
+  //          asset.configuration = new UtilityAI(aiId);
+
+  //          if(isMockAI)
+  //              ConfigureAI(asset.configuration.selector);
+
+
+  //          AssetDatabase.CreateAsset(asset, assetDir);
+  //          AssetDatabase.SaveAssets();
+
+
+  //          return asset;
+  //      }
+
+
+		//#region MockAIs
+
+    //    IAction a;
+    //    IScorer scorer;
+    //    List<IScorer> scorers;
+    //    IQualifier q;
+    //    Selector s;
+
+    //    List<IQualifier> qualifiers;
+    //    List<IScorer[]> allScorers;
+    //    List<IAction> actions;
+
+    //    void ConfigureAI(Selector rs)
+    //    {
+    //        if(qualifiers == null) qualifiers = new List<IQualifier>();
+    //        if (allScorers == null) allScorers = new List<IScorer[]>();
+    //        if (actions == null) actions = new List<IAction>();
+
+
+    //        a = new ScanForEntities();
+    //        actions.Add(a);
+    //        a = new ScanForPositions();
+    //        actions.Add(a);
+    //        scorers = new List<IScorer>();
+    //        scorer = new HasEnemies();
+    //        scorers.Add(scorer);
+    //        allScorers.Add(scorers.ToArray());
+    //        scorers = new List<IScorer>();
+    //        scorer = new TestScorerB();
+    //        scorers.Add(scorer);
+    //        allScorers.Add(scorers.ToArray());
+    //        q = new CompositeScoreQualifier();
+    //        qualifiers.Add(q);
+    //        q = new CompositeScoreQualifier();
+    //        qualifiers.Add(q);
+
+    //        //  Setup each qualifiers action and scorers.
+    //        for (int index = 0; index < qualifiers.Count; index++)
+    //        {
+    //            //  Add qualifier to rootSelector.
+    //            rs.qualifiers.Add(qualifiers[index]);
+    //            var qualifier = rs.qualifiers[index];
+    //            //  Set qualifier's action.
+    //            qualifier.action = actions[index];
+    //            //  Add scorers to qualifier.
+    //            foreach (IScorer scorer in allScorers[index]){
+    //                if (qualifier is CompositeQualifier){
+    //                    var q = qualifier as CompositeQualifier;
+    //                    q.scorers.Add(scorer);
+    //                }
+    //            }
+    //        }
+    //    }
+
+    //    #endregion
+
+    //}
+
+    #endregion
+
+
     [Serializable]
     public class UtilityAIAsset : ScriptableObject
     {
         public string friendlyName;
         [Multiline]
         public string description;
-        public int version;
+        [ShowOnly]
+        public float version = 1.0f;
         public string aiId;
-
-
+        [HideInInspector]
+        public byte[] aiConfig;
+        [HideInInspector]
+        public byte[] editorConfig;
+        [HideInInspector]
         public UtilityAI configuration;
-        public string[] editorConfiguration;
 
         ///<summary>
         ///Creates an instance for the specified AI.
         ///</summary>
-        ///<param name = "aiId" > The AI ID.</param>
-        ///<param name = "aiName" > Name of the AI.</param>
+        ///<param name = "aiId" > The name of the ai that gets registered.</param>
+        ///<param name = "aiName" > Name of the asset file.</param>
         ///<returns></returns>
-        public UtilityAIAsset CreateAsset(string aiId, string aiName)
+        public UtilityAIAsset CreateAsset(string aiId, string aiName, bool isMockAI = false)
         {
-            string dir = AiManager.StorageFolder;
-            string assetDir = AssetDatabase.GenerateUniqueAssetPath(dir + "/" + aiName + ".asset");
-            aiName = Path.GetFileNameWithoutExtension(assetDir);
-
             UtilityAIAsset asset = ScriptableObject.CreateInstance<UtilityAIAsset>();
-            asset.friendlyName = aiName;
-            asset.configuration = new UtilityAI(){
-                name = aiName
-            };
+
+            string assetDir = AssetDatabase.GenerateUniqueAssetPath(AiManager.StorageFolder + "/" + aiName + ".asset");
+
+
+            asset.friendlyName = Path.GetFileNameWithoutExtension(assetDir);
             asset.aiId = aiId;
+            asset.configuration = new UtilityAI(asset.friendlyName);
 
+            asset.aiConfig = ProjectAsset.GetData(asset.configuration);
 
-
+            if (isMockAI){
+                ConfigureAI(asset.configuration.selector);
+            }
+                
 
             AssetDatabase.CreateAsset(asset, assetDir);
             AssetDatabase.SaveAssets();
 
-            //Debug.Log(configuration.ai.name);
-            //Debug.Log(asset.configuration.name);
+
             return asset;
         }
 
 
-
-
-
-
-        #region Selector and UtilityAI
-        //public Selector configuration;
-        //public UtilityAI editorConfiguration;
-
-        /////<summary>
-        /////Creates an instance for the specified AI.
-        /////</summary>
-        /////<param name = "aiId" > The AI ID.</param>
-        /////<param name = "aiName" > Name of the AI.</param>
-        /////<returns></returns>
-        //public UtilityAIAsset CreateAsset(string aiId, string aiName)
-        //{
-        //    string dir = AiManager.StorageFolder;
-        //    string assetDir = AssetDatabase.GenerateUniqueAssetPath(dir + "/" + aiName + ".asset");
-        //    aiName = Path.GetFileNameWithoutExtension(assetDir);
-
-        //    UtilityAIAsset asset = ScriptableObject.CreateInstance<UtilityAIAsset>();
-        //    asset.configuration = new ScoreSelector();
-        //    asset.editorConfiguration = new UtilityAI(aiName)
-        //    {
-        //        rootSelector = asset.configuration
-        //    };
-        //    asset.aiId = aiId;
-
-        //    //asset.configuration = new UtilityAIClient(new UtilityAI(aiName));
-        //    //asset.aiId = aiId;
-
-        //    AssetDatabase.CreateAsset(asset, assetDir);
-        //    AssetDatabase.SaveAssets();
-
-
-        //    return asset;
-        //}
-        #endregion
-
-
         #region MockAIs
-        public void CreateAsset(string aiId, string aiName, Type type)
+
+        IAction a;
+        IScorer scorer;
+        List<IScorer> scorers;
+        IQualifier q;
+        Selector s;
+
+        List<IQualifier> qualifiers;
+        List<IScorer[]> allScorers;
+        List<IAction> actions;
+
+        void ConfigureAI(Selector rs)
         {
-            var utilityAI = Type.GetType(typeof(UtilityAIAsset).Namespace + "." + aiId);
-            if (utilityAI == null)
+            if (qualifiers == null) qualifiers = new List<IQualifier>();
+            if (allScorers == null) allScorers = new List<IScorer[]>();
+            if (actions == null) actions = new List<IAction>();
+
+
+            a = new ScanForEntities();
+            actions.Add(a);
+            a = new ScanForPositions();
+            actions.Add(a);
+            scorers = new List<IScorer>();
+            scorer = new HasEnemies();
+            scorers.Add(scorer);
+            allScorers.Add(scorers.ToArray());
+            scorers = new List<IScorer>();
+            scorer = new TestScorerB();
+            scorers.Add(scorer);
+            allScorers.Add(scorers.ToArray());
+            q = new CompositeScoreQualifier();
+            qualifiers.Add(q);
+            q = new CompositeScoreQualifier();
+            qualifiers.Add(q);
+
+            //  Setup each qualifiers action and scorers.
+            for (int index = 0; index < qualifiers.Count; index++)
             {
-                Debug.LogWarning(string.Format("Could not find {0}", aiId));
-                return;
+                //  Add qualifier to rootSelector.
+                rs.qualifiers.Add(qualifiers[index]);
+                var qualifier = rs.qualifiers[index];
+                //  Set qualifier's action.
+                qualifier.action = actions[index];
+                //  Add scorers to qualifier.
+                foreach (IScorer scorer in allScorers[index])
+                {
+                    if (qualifier is CompositeQualifier)
+                    {
+                        var q = qualifier as CompositeQualifier;
+                        q.scorers.Add(scorer);
+                    }
+                }
             }
-
-            var instance = (UtilityAI)Activator.CreateInstance(utilityAI, aiName);
-            //configuration = new UtilityAIClient(instance);
-
-
-            var asset = ScriptableObject.CreateInstance(type);
-
-
-            string dir = AiManager.StorageFolder;
-            string assetDir = AssetDatabase.GenerateUniqueAssetPath(dir + "/" + aiName + ".asset");
-            AssetDatabase.CreateAsset(asset, assetDir);
-            AssetDatabase.SaveAssets();
-
-            //Debug.Log(configuration);
-            //Debug.Log(description);
         }
-#endregion
 
+        #endregion
     }
 
 }

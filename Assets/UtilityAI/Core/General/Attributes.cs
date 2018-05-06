@@ -4,6 +4,15 @@ namespace UtilityAI
     using System;
     using System.Collections;
 
+
+    /// <summary>
+    /// Used to make a readonly property.  (Field cannot be edited)
+    /// </summary>
+    public class ShowOnlyAttribute : PropertyAttribute
+    {
+    }
+
+
     [AttributeUsage( AttributeTargets.Class, AllowMultiple = true)]
     public class AICategoryAttribute : Attribute
     {

@@ -11,20 +11,19 @@
     [CustomEditor(typeof(TaskNetworkComponent))]
     public class TaskNetworkEditor : Editor
     {
-        
         TaskNetworkComponent taskNetwork;
         SerializedObject taskNetworkSO;
 
         //  Currently selected Client.  Used for the Editor tab.
-        UtilityAI activeClient;
-        List<SerializedObject> aiAssets = new List<SerializedObject>();
+        UtilityAIAsset activeClient;
+        SerializedObject activeClientSO;
+        GenericMenu clientList;
 
+        bool showDefaultInspector, showDeleteAssetOption;
+        bool debugEditorFoldout = true;
+        string selectorConfigInfo;
+        int currentTab;
 
-        public static bool debugClients, debugClientFoldout;
-        public static bool showDefaultInspector, showDeleteAssetOption;
-
-        public static int currentTab;
-        public static int selectedClient;
 
 
         void OnEnable()
@@ -32,37 +31,88 @@
             taskNetwork = target as TaskNetworkComponent;
             taskNetworkSO = new SerializedObject(taskNetwork);
 
+            UpdateClientList();
+
+            selectorConfigInfo = activeClient != null ? DebugEditorUtilities.DebugSelectorInfo(activeClient.configuration.selector) : "No Selected Selector";
         }
 
 
-        public virtual void ShowOptionsWindow<T>(Type windowType, Type optionType = null) where T : TaskNetworkOptionsWindow, new()
-        {
-            T window = new T();
 
+		public virtual void ShowOptionsWindow<T>(Type optionType = null) where T : OptionsWindow<T>, new(){
+            T window = new T();
             if (optionType == null)
-                window.Init(this);
+                window.Init(window, this);
             else
-                window.Init(this, optionType);
+                window.Init(window, this, optionType);
+        }
+
+
+        void UpdateClientList(){
+            clientList = new GenericMenu();
+            foreach (UtilityAIClient client in taskNetwork.clients){
+                clientList.AddItem(new GUIContent(client.ai.name), false, SetActiveClient, client);
+            }
+        }
+
+
+        public void AddUtilityAIAsset(UtilityAIAsset aiAsset){
+            UtilityAIClient client = new UtilityAIClient(aiAsset.configuration);
+            //  Add to Lists
+            taskNetwork.clients.Add(client);
+            taskNetwork.assets.Add(aiAsset);
+            //  Update Editor.
+            EditorUtility.SetDirty(target);
+            UpdateClientList();
+            Repaint();
+
+        }
+
+
+        public void RemoveUtilityAIAsset(int index){
+            activeClient = null;
+            taskNetwork.clients.RemoveAt(index);
+            taskNetwork.assets.RemoveAt(index);
+            //  Update Editor.
+            EditorUtility.SetDirty(target);
+            UpdateClientList();
+            Repaint();
+        }
+
+
+
+
+        public virtual void SetActiveClient(object c){
+            UtilityAIClient client = c as UtilityAIClient;
+            int index = taskNetwork.clients.IndexOf(client);
+            activeClient = taskNetwork.assets[index];
+            activeClientSO = new SerializedObject(activeClient);
+        }
+
+        //  Debug
+        private void ActiveClientMessageBox(){
+            string _activeClient = activeClient == null ? "<None>" : activeClient.name;
+            string _activeClientSO = activeClient == null ? "<None>" : activeClientSO.ToString();
+            string activeClientMsg = string.Format("Active Client: {0}\nSerializeObject: {1}", _activeClient, _activeClientSO);
+            EditorGUILayout.HelpBox(activeClientMsg, MessageType.Info);
+            EditorGUILayout.Space();
         }
 
 
 
         #region AI Client Inspector
 
-
         /// <summary>
         /// Client Inspector
         /// </summary>
         protected virtual void DrawTaskNetworkInspector()
         {
-
             //  Displaying header options.
             using (new EditorGUILayout.HorizontalScope()){
                 EditorGUILayout.LabelField("AIs", EditorStyles.boldLabel);
 
                 //  Add a new UtilityAIClient
                 if (GUILayout.Button("Add", EditorStyles.miniButton, GUILayout.Width(65f))){
-                    ShowOptionsWindow<AddClientWindow>(typeof(AddClientWindow));
+                    ShowOptionsWindow<ChangeClientWindow>();
                 }
             }
 
@@ -90,7 +140,7 @@
                                     Debug.Log(client.ai.name);
                                 }
 
-                                if (GUILayout.Button(" - ", EditorStyles.miniButton, GUILayout.Width(28f))){
+                                if (InspectorUtility.OptionsPopupButton(InspectorUtility.DeleteContent)){
                                     RemoveUtilityAIAsset(i);
                                 }
                             }
@@ -110,6 +160,7 @@
                                 EditorGUILayout.LabelField("to ", GUILayout.Width(20f));
                                 client.intervalMax = EditorGUILayout.FloatField(client.intervalMax, GUILayout.Width(35f));
                             }
+
                             //  For Client StartDelay
                             using (new EditorGUILayout.HorizontalScope())
                             {
@@ -125,33 +176,24 @@
 
             }  // The group is now ended
 
+            //  -- Active Client Info 
+            if(taskNetwork.assets.Count > 0){
+                ActiveClientMessageBox();
+            }
 
-        }
-
-
-        public void AddUtilityAIAsset(UtilityAIAsset aiAsset)
-        {
-            UtilityAI ai = aiAsset.configuration;
-            UtilityAIClient client = new UtilityAIClient(ai);
-            //  Add to Lists
-            taskNetwork.clients.Add(client);
-            aiAssets.Add(new SerializedObject(aiAsset));
-            //  Update Editor.
-            EditorUtility.SetDirty(target);
-            Repaint();
-        }
-
-        public void RemoveUtilityAIAsset(int index)
-        {
-            taskNetwork.clients.RemoveAt(index);
-            aiAssets.RemoveAt(index);
-            //  Update Editor.
-            EditorUtility.SetDirty(target);
-            Repaint();
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("Editor", EditorStyles.miniButton, GUILayout.Width(65f))){
+                    AIAssetEditor.Init();
+                }
+            }
+            GUILayout.Space(8);
         }
 
 
         #endregion
+
 
 
         #region AI Client Editor Inspector
@@ -162,159 +204,137 @@
         protected virtual void DrawTaskNetworkClientInspector()
         {
             //  -- Header
-            using (new EditorGUILayout.HorizontalScope()){
-                EditorGUILayout.LabelField("Client Editor", EditorStyles.boldLabel);
-
-                GUIContent buttonLabel = activeClient != null ? new GUIContent("Selected Client:  " + activeClient.name) : new GUIContent("No Selected Client");
-
-                if (GUILayout.Button(buttonLabel, EditorStyles.popup, GUILayout.Height(24))){
-                    var clients = new GenericMenu();
-                    foreach (UtilityAIClient client in taskNetwork.clients){
-                        clients.AddItem(new GUIContent(client.ai.name), false, SetActiveClient, client.ai);
-                    }
-                    clients.ShowAsContext();
-                }
-            }
-
-            //ContainerNode containerNode = new ContainerNode("TestNode");
-            //SerializedObject node = new SerializedObject(containerNode);
-
-
-
-
-            //  -- Inspector 
-            EditorGUILayout.Space();
-            if (activeClient != null)
+            using (new EditorGUILayout.HorizontalScope())
             {
-                ReorderableList list;
-                Selector rootSelector = activeClient.rootSelector;
-
-
-                EditorGUILayout.LabelField(activeClient.rootSelector.GetType().ToString(), EditorStyles.boldLabel);
-                EditorGUILayout.Space();
-
-                //var attr = activeClient.rootSelector.GetType().GetProperty("FriendlyNameAttribute").GetCustomAttribute(typeof(FriendlyNameAttribute));
-                //var friendlyName = attr as FriendlyNameAttribute;
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    EditorGUILayout.ToggleLeft(GUIContent.none, true, GUILayout.Width(16f));
-                    //  Name of Selected Selector, Qualifier or Action Type
-                    EditorGUILayout.LabelField(new GUIContent(rootSelector.GetType().Name + " | TASKNETWORK AI"));  // rootSelector.GetType().Name
-
-                    //  Change Selector
-                    if (GUILayout.Button("C", EditorStyles.miniButton, GUILayout.Width(28))){
-                        ShowOptionsWindow<AddOptionsWindow>(typeof(AddOptionsWindow), typeof(Selector));
-                    }
-                    //  Delete Selector
-                    if (GUILayout.Button("-", EditorStyles.miniButton, GUILayout.Width(28))){
-                        Debug.Log("Deleting");
-                    }
+                EditorGUILayout.LabelField("Client Editor", EditorStyles.boldLabel);
+                GUIContent buttonLabel = activeClient != null ? new GUIContent("Selected Client:  " + activeClient.name) : new GUIContent("No Selected Client");
+                if (GUILayout.Button(buttonLabel, EditorStyles.popup, GUILayout.Height(24))){
+                    clientList.ShowAsContext();
                 }
-
-
-                //  NameField of Selected Selector, Qualifier or Action
-                EditorGUILayout.DelayedTextField("Name: ", "");
-                //  Description of Selector.
-                EditorGUILayout.LabelField("Description");
-                EditorGUILayout.TextArea("", GUILayout.Height(EditorGUIUtility.singleLineHeight * 4));
-                EditorGUILayout.Space();
-
-
-                //  Custom Attribute Fields.
-                EditorGUILayout.IntField("First Test Field", 1);
-                EditorGUILayout.IntField("Second Test Field", 2);
-
-
-                //  List of items.
-                EditorGUILayout.Space();
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    EditorGUILayout.LabelField(new GUIContent("Qualifiers"));
-
-                    if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("Toolbar Plus").image), GUIStyle.none, GUILayout.Width(28))){
-                        ShowOptionsWindow<AddOptionsWindow>(typeof(AddOptionsWindow), typeof(QualifierBase));
-                    }
-                }
-
-                using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-                {
-                    if (rootSelector.qualifiers.Count != 0){
-                        list = new ReorderableList(rootSelector.qualifiers, typeof(IQualifier), true, false, false, false);
-                        list.showDefaultBackground = false;
-                        HandleReorderableList(list);
-                        list.DoLayoutList();
-                    }
-                    EditorGUILayout.LabelField(new GUIContent(rootSelector.defaultQualifier.GetType().Name));
-                }
-
-
-
-                #region Debug Actions/Scorers Buttons
-                //  -- Debug
-                GUILayout.Space(18);
-                using (new EditorGUILayout.HorizontalScope()){
-                    if (GUILayout.Button("Actions", EditorStyles.miniButton))
-                        ShowOptionsWindow<AddOptionsWindow>(typeof(AddOptionsWindow), typeof(ActionBase));
-                    if (GUILayout.Button("Scorers", EditorStyles.miniButton))
-                        ShowOptionsWindow<AddOptionsWindow>(typeof(AddOptionsWindow), typeof(ScorerBase));
-                }
-
-                #endregion
             }
+            //  -- Active Client Info 
+            ActiveClientMessageBox();
 
 
+            // -- Editor Inspector
+            activeClient = InspectorDrawer.ElementInspector(activeClient);
+
+
+            #region EditorInspector
+            //  -- Inspector 
+            //if (activeClient != null)
+            //{
+            //    bool elementIsDisable;
+            //    string elementName;
+            //    string elementDescription;
+            //    string elementDisplayName;
+            //    ReorderableList list;
+            //    Selector rootSelector = activeClient.rootSelector;
+
+            //    EditorGUILayout.LabelField(activeClient.rootSelector.GetType().ToString(), EditorStyles.boldLabel);
+            //    EditorGUILayout.Space();
+
+            //    //var attr = activeClient.rootSelector.GetType().GetProperty("FriendlyNameAttribute").GetCustomAttribute(typeof(FriendlyNameAttribute));
+            //    //var friendlyName = attr as FriendlyNameAttribute;
+            //    using (new EditorGUILayout.HorizontalScope())
+            //    {
+            //        elementIsDisable = EditorGUILayout.ToggleLeft(new GUIContent(rootSelector.GetType().Name + " | TASKNETWORK AI"), true);
+
+            //        if(InspectorUtility.OptionsPopupButton(InspectorUtility.ChangeContent)){
+            //            ShowOptionsWindow<AddOptionsWindow>(typeof(Selector));
+            //        }
+            //        if (InspectorUtility.OptionsPopupButton(InspectorUtility.DeleteContent)){
+            //            Debug.Log("Deleting");
+            //        }
+            //    }
+
+
+            //    //  NameField of Selected Selector, Qualifier or Action
+            //    elementName = InspectorUtility.NameField("Test Name");
+            //    //  Description of Selector.
+            //    elementDescription = InspectorUtility.DescriptionField("", 2);
+
+
+            //    //  Custom Attribute Fields.
+            //    EditorGUILayout.LabelField(" <Custom Attributes> ");
+            //    EditorGUILayout.IntField("First Test Field", 1);
+            //    EditorGUILayout.IntField("Second Test Field", 2);
+
+
+
+            //    //  Header for list of items.
+            //    EditorGUILayout.Space();
+            //    using (new EditorGUILayout.HorizontalScope())
+            //    {
+            //        elementDisplayName = "Qualifiers";
+            //        EditorGUILayout.LabelField(new GUIContent(elementDisplayName));
+
+            //        if (InspectorUtility.OptionsPopupButton(InspectorUtility.AddContent))
+            //        {
+            //            ShowOptionsWindow<AddOptionsWindow>(typeof(QualifierBase));
+            //            activeClient.rootSelector.qualifiers.Add(new CompositeScoreQualifier());
+            //            aiAssets[0].ApplyModifiedProperties();
+            //        }
+            //    }
+
+            //    //  List of items.
+            //    using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            //    {
+            //        if (rootSelector.qualifiers.Count != 0){
+            //            list = new ReorderableList(rootSelector.qualifiers, typeof(IQualifier), true, false, false, false);
+            //            list.showDefaultBackground = false;
+            //            HandleReorderableList(list);
+            //            list.DoLayoutList();
+            //        }
+            //        EditorGUILayout.LabelField(new GUIContent(rootSelector.defaultQualifier.GetType().Name));
+            //    }
+
+
+            //}
+            #endregion
 
 
             #region Debug Editor
-            //  -- Debug
-            GUILayout.Space(8);
-            EditorGUILayout.LabelField("Debug");
-            if (GUILayout.Button(" Print Root Selector ", EditorStyles.miniButton, GUILayout.Height(18))){
-                Debug.Log(activeClient.rootSelector);
-                Debug.Log(taskNetworkSO.FindProperty("clients.Array.data[0].ai"));
+
+            GUILayout.Space(18);
+
+            debugEditorFoldout = EditorGUILayout.Foldout(debugEditorFoldout, "< Debug >"); 
+            if(debugEditorFoldout)
+            {
+                using (new EditorGUILayout.HorizontalScope()){
+                    if (GUILayout.Button("Actions", EditorStyles.miniButton)){
+                        ShowOptionsWindow<AddOptionsWindow>(typeof(ActionBase));
+                    }
+                    if (GUILayout.Button("Scorers", EditorStyles.miniButton)){
+                        ShowOptionsWindow<AddOptionsWindow>(typeof(ScorerBase));
+                    }
+                }
+
+                //  -- Debug
+                if (GUILayout.Button(" Print Root Selector ", EditorStyles.miniButton, GUILayout.Height(18))){
+                    Debug.Log(activeClient.configuration.rootSelector + "\n" + activeClient.configuration.rootSelector.qualifiers.Count);
+                    Debug.Log(activeClient.configuration.selector + "\n" + activeClient.configuration.selector.qualifiers.Count);
+                    Debug.Log(activeClientSO.FindProperty("configuration.selector").type);
+                    Debug.Log(taskNetworkSO.FindProperty("clients.Array.data[0].ai"));
+                }
+                EditorGUILayout.Space();
+                selectorConfigInfo = activeClient != null ? DebugEditorUtilities.DebugSelectorInfo(activeClient.configuration.selector) : "No Selected Selector";
+                EditorGUILayout.HelpBox(selectorConfigInfo, MessageType.Info);
             }
-            EditorGUILayout.Space();
-            EditorGUILayout.HelpBox(activeClient != null ? DebugEditorUtilities.DebugSelectorInfo(activeClient) : "No Selected Selector", MessageType.Info);
+
 
             #endregion
         }
 
 
 
-        private void HandleReorderableList(ReorderableList list)
-        {
-
-            list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
-            {
-                var element = list.list[index];
-                EditorGUI.LabelField(rect, new GUIContent(element.GetType().Name));
-
-                if (GUI.Button(new Rect(rect.x + rect.width - 18, rect.y, 18, EditorGUIUtility.singleLineHeight), new GUIContent(EditorGUIUtility.IconContent("Toolbar Minus").image), GUIStyle.none)){
-                    list.list.RemoveAt(index);
-                    EditorUtility.SetDirty(target);
-                    Repaint();
-                }
-            };
-
-            list.onSelectCallback = (ReorderableList l) =>
-            {
-
-            };
-
-        }
-
-
-        protected virtual void SetActiveClient(object client){
-            activeClient = client as UtilityAI;
-        }
 
 
         #endregion
 
 
-
-
         #region LastTab
+
         /// <summary>
         /// Draws the construct client inspector.
         /// </summary>
@@ -326,20 +346,31 @@
                 EditorGUILayout.LabelField("Debug AI Clients", EditorStyles.boldLabel);
 
 
-                if (GUILayout.Button("Debug AI")){
-                    Debug.Log(activeClient.rootSelector.GetType());
+                if (GUILayout.Button("Debug AI RootSelector Properties")){
+                    Debug.Log(activeClient.configuration.rootSelector.GetType());
 
-                    var entity = activeClient.rootSelector;
-                    var obj = TaskNetworkEditorUtilities.GetAllProperties(entity);
+                    var entity = activeClient.configuration.rootSelector;
+                    var obj = TaskNetworkUtilities.GetAllProperties(entity);
                     foreach(PropertyInfo info in obj){
                         Debug.Log(info.GetValue(entity));
                     }
                 }
 
+                //if (GUILayout.Button("Debug Serialized AI"))
+                //{
+                //    if (aiAssets.Count == 0)
+                //        Debug.Log("AI Asset Count is: " + aiAssets.Count);
+                    
+                //    if(aiAssets.Count > 0){
+                //        SerializedProperty selector = aiAssets[0].FindProperty("selector");
+                //        Debug.Log(selector);
+                //        Debug.Log(selector.propertyPath);
+                //        Debug.Log(selector.propertyType);
+                //    }
+                //}
+
             }  // The group is now ended
-
         }
-
 
         #endregion
 
@@ -354,7 +385,7 @@
 
                 if (GUILayout.Button("Clear", EditorStyles.miniButton, GUILayout.Width(65f))){
                     taskNetwork.clients.Clear();
-                    aiAssets.Clear();
+                    taskNetwork.assets.Clear();
                     activeClient = null;
                     //Repaint();
                 }
@@ -366,7 +397,7 @@
                     if (GUILayout.Button("Delete", EditorStyles.miniButton, GUILayout.Width(65f))){
                         activeClient = null;
                         taskNetwork.clients.Clear();
-                        aiAssets.Clear();
+                        taskNetwork.assets.Clear();
                         var results = AssetDatabase.FindAssets("t:UtilityAIAsset", new string[]{AiManager.StorageFolder} );
                         foreach(string guid in results){
                             AssetDatabase.DeleteAsset(AssetDatabase.GUIDToAssetPath(guid));
