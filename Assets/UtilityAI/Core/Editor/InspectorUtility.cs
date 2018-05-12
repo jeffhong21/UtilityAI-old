@@ -28,7 +28,7 @@
             AddContent = new GUIContent(Icons.AddIcon, "<Tooltip> Add new options content");
 
             miniBtnWidth = 28f;
-            miniBtnHeight = EditorGUIUtility.singleLineHeight + 2f;
+            miniBtnHeight = EditorGUIUtility.singleLineHeight;
         }
 
 
@@ -46,7 +46,12 @@
             return clicked;
         }
 
-
+        /// <summary>
+        /// Field for writing descriptions
+        /// </summary>
+        /// <returns>The field.</returns>
+        /// <param name="description">Description.</param>
+        /// <param name="lines">Lines.</param>
         public static string DescriptionField(string description, int lines = 3)
         {
             EditorGUILayout.LabelField("Description");
@@ -56,11 +61,68 @@
             return description;
         }
 
+        /// <summary>
+        /// Field for inputing name
+        /// </summary>
+        /// <returns>The field.</returns>
+        /// <param name="name">Name.</param>
         public static string NameField(string name){
             name = EditorGUILayout.DelayedTextField("Name: ", name);
             return name;
         }
 
+
+        public static float[] MinMaxInputField(ref float min, ref float max, GUIContent label, float fieldWidth = 35f)
+        {
+            EditorGUILayout.LabelField(label, GUILayout.Width(Screen.width * 0.33f));
+            min = EditorGUILayout.FloatField(min, GUILayout.Width(fieldWidth));
+            EditorGUILayout.LabelField("to ", GUILayout.Width(20f));
+            max = EditorGUILayout.FloatField(max, GUILayout.Width(fieldWidth));
+            return new float[] { min, max };
+        }
+
+
+
+
+
+        public static void CreateClientDrawer(string aiName, TaskNetworkComponent taskNetwork, bool isDemoAI = false)
+        {
+            int windowSize = 250;
+            string defaultAiID = "NewUtilityAI";
+            string defaultAiName = "New Utility AI";
+            string defaultDemoAiID = "NewDemoMockAI";
+            string defaultDemoAiName = "NewDemoMockAI";
+
+            string _defaultAiID = isDemoAI == false ? defaultDemoAiID : defaultAiID;
+            string _defaultAiName = isDemoAI == false ? defaultDemoAiName : defaultAiName;
+
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            {
+                EditorGUILayout.LabelField("New AI Name", Styles.TextCenterStyle);
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    GUILayout.Label("Name: ", GUILayout.Width(windowSize * 0.18f));
+                    aiName = GUILayout.TextField(aiName);
+                }
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    if (GUILayout.Button("Ok"))
+                    {
+                        var utilityAIAsset = new UtilityAIAsset();
+                        var aiAsset = utilityAIAsset.CreateAsset(String.IsNullOrEmpty(aiName) || String.IsNullOrWhiteSpace(aiName) ? _defaultAiID : aiName,
+                                                                 String.IsNullOrEmpty(aiName) || String.IsNullOrWhiteSpace(aiName) ? _defaultAiName : aiName,
+                                                                 taskNetwork.selectAiAssetOnCreate);
+
+                        //editor.AddUtilityAIAsset(aiAsset);
+                        //CloseWindow();
+                    }
+                    if (GUILayout.Button("Cancel"))
+                    {
+                        //CloseWindow();
+                    }
+                }
+            }
+        }
 
 
         public static void HandleReorderableList(ReorderableList list)
@@ -84,19 +146,23 @@
 
 
 
+
+
+
+
         /// <summary>
         /// Shows the options window.
         /// </summary>
         /// <param name="editor">Editor.</param>
         /// <param name="optionType">Option type.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static void ShowOptionsWindow<T>(TaskNetworkEditor editor, Type optionType = null) where T : OptionsWindow<T>, new()
+        public static void ShowOptionsWindow<T>(TaskNetworkComponent taskNetwork, Type optionType = null) where T : OptionsWindow<T>, new()
         {
             T window = new T();
             if (optionType == null)
-                window.Init(window, editor);
+                window.Init(window, taskNetwork);
             else
-                window.Init(window, editor, optionType);
+                window.Init(window, taskNetwork, optionType);
         }
 
 

@@ -1,11 +1,11 @@
 ﻿namespace UtilityAI
 {
     using UnityEngine;
-    using System;
+
     /// <summary>
     /// Option scorer base.  This generates a score for ActionWithOptions and generates a score for an indivual option.
     /// </summary>
-    [Serializable]
+    [System.Serializable]
     public abstract class ScorerOptionBase<TOption> : IOptionScorer<TOption>
     {
 

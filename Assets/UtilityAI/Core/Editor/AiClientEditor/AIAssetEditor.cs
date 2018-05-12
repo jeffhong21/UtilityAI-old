@@ -1,4 +1,4 @@
-namespace UtilityAI
+﻿namespace UtilityAI
 {
     using System;
     using System.IO;
@@ -71,7 +71,8 @@ namespace UtilityAI
             {
                 if (currentClient != null)
                 {
-                    var count = currentClient.configuration.selector.qualifiers.Count;
+                    //var count = currentClient.configuration.selector.qualifiers.Count;
+                    var count = currentClient.configuration.rootSelector.qualifiers.Count;
                     GUILayout.Label("Number of Qualifiers:  " + count.ToString());
                 }
 
@@ -104,7 +105,7 @@ namespace UtilityAI
             using (new EditorGUILayout.HorizontalScope())
             {
                 if (ToolbarButton(new GUIContent("New"))){
-                    AddNewClientWindow window = new AddNewClientWindow();
+                    CreateNewClientWindow window = new CreateNewClientWindow();
                     window.Init(window);
                 }
                 GUILayout.Space(5);
@@ -154,7 +155,7 @@ namespace UtilityAI
                     if (GUILayout.Button(" Print Root Selector ", EditorStyles.miniButton, GUILayout.Height(18)))
                     {
                         Debug.Log(currentClient.configuration.rootSelector + "\n" + currentClient.configuration.rootSelector.qualifiers.Count);
-                        Debug.Log(currentClient.configuration.selector + "\n" + currentClient.configuration.selector.qualifiers.Count);
+                        //Debug.Log(currentClient.configuration.selector + "\n" + currentClient.configuration.selector.qualifiers.Count);
                         //Debug.Log(serializedObject.FindProperty("configuration.selector").type);
                     }
 
@@ -174,7 +175,8 @@ namespace UtilityAI
                 }
 
                 EditorGUILayout.Space();
-                string selectorConfigInfo = currentClient != null ? DebugEditorUtilities.DebugSelectorInfo(currentClient.configuration.selector) : "No Selected Selector";
+                //string selectorConfigInfo = currentClient != null ? DebugEditorUtilities.SelectorConfig(currentClient.configuration.selector) : "No Selected Selector";
+                string selectorConfigInfo = currentClient != null ? DebugEditorUtilities.SelectorConfig(currentClient.configuration.rootSelector) : "No Selected Selector";
                 EditorGUILayout.HelpBox(selectorConfigInfo, MessageType.Info);
             }
 

@@ -13,10 +13,12 @@
         Failure
     }
 
-    [AICategory("Action")]
+
     [Serializable]
     public abstract class ActionBase : IAction
     {
+        public string _name;
+        public string name { get { return _name; } set { _name = value; } }
         //public TaskNetworkComponent utilityAIComponent {get; set;} //  So it can start coroutine
         //public ActionStatus actionStatus { get; protected set; }
 

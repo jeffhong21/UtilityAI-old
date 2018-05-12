@@ -1,7 +1,9 @@
 ﻿<Properties StartupConfiguration="{5A6D36D9-6A32-0D56-BD7C-975C39BDAFAD}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/UtilityAI/Core/Misc/Visualizer/PositionScoreVisualizer.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/UtilityAI/Entity/AIEntityPerceptionModule.cs">
     <Files>
-      <File FileName="Assets/UtilityAI/Core/Misc/Visualizer/PositionScoreVisualizer.cs" Line="69" Column="35" />
+      <File FileName="Assets/UtilityAI/Entity/AIEntityController.cs" Line="81" Column="9" />
+      <File FileName="Assets/UtilityAI/Resources/Library/Actions/PatrolAction.cs" Line="31" Column="1" />
+      <File FileName="Assets/UtilityAI/Entity/AIEntityPerceptionModule.cs" Line="26" Column="76" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

@@ -97,10 +97,6 @@
     public class ScoreSelector : Selector
     {
 
-        public ScoreSelector() : base() 
-        {
-
-        }
 
 
         public override IQualifier Select(IAIContext context, List<IQualifier> qualifiers, IDefaultQualifier defaultQualifier)  //  Need default qualifier.  Final return value should be default Qualifier.

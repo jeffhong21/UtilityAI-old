@@ -98,15 +98,15 @@
         /// </summary>
         /// <returns>The client info.</returns>
         /// <param name="taskNetwork">Task network.</param>
-        public static string DebugClientInfo(TaskNetworkComponent taskNetwork)
+        public static string ClientStateInfo(TaskNetworkComponent taskNetwork)
         {
             string clientInfo = "";
             foreach (UtilityAIClient client in taskNetwork.clients)
             {
-                clientInfo = client.ai.name + " | State: " + client.state + "\n";
-                foreach (KeyValuePair<CompositeQualifier, float> item in client.selectorResults)
+                clientInfo = client.ai + " | State: " + client.state + "\n";
+                foreach (KeyValuePair<IQualifier, float> item in client.selectorResults)
                 {
-                    CompositeQualifier qualifier = item.Key;
+                    IQualifier qualifier = item.Key;
                     float score = item.Value;
 
                     var action = qualifier.action;
@@ -115,18 +115,18 @@
                     {
                         var _action = action as ActionWithOptions<Vector3>;
                         action = _action;
-                        actionName = _action.name;
+                        //actionName = _action.name;
                     }
-
-
 
                     if (client.currentAction == action)
                         clientInfo += string.Format(" <b>Qualifier:</b> {0} | <b>Score:</b>: <color=lime>{1}</color>\n <b>Action:</b>:  <color=lime>{2}</color>\n", qualifier.GetType().Name, score, actionName);
                     else
                         clientInfo += string.Format(" <b>Qualifier:</b> {0} | <b>Score:</b>: {1}\n <b>Action:</b>:  {2}\n", qualifier.GetType().Name, score, actionName);
+
                 }
 
             }
+
 
             return clientInfo;
         }
@@ -137,13 +137,13 @@
         /// </summary>
         /// <returns>The selector info.</returns>
         /// <param name="s">S.</param>
-        public static string DebugSelectorInfo(Selector selector)
+        public static string SelectorConfig(Selector selector)
         {
             //var selector = s.rootSelector;
 
             string selectorInfo = "Displays configuration of a Selector\n";
             //selectorInfo += string.Format("** taskNetwork Name: :  {0} **\n\n", s.GetType().Name);
-            selectorInfo += string.Format("  Selector Type:  {0}\n", selector.GetType().Name);
+            selectorInfo += string.Format("  Selector Type:  {0}\n\n", selector.GetType().Name);
 
             //  Get Selector Name and Type.
             for (int i = 0; i < selector.qualifiers.Count; i++)
@@ -162,7 +162,6 @@
                 actionInfo += string.Format("{0}", qualifier.action.GetType().Name);
 
 
-
                 selectorInfo += string.Format("  Qualifier:    {0}\n", qualifierInfo);
                 selectorInfo += string.Format("  Action:       {0}\n", actionInfo);
                 selectorInfo += string.Format("  Number of Scorers:  {0}\n", qualifier.scorers.Count);
@@ -170,9 +169,19 @@
                 selectorInfo += "\n";
             }
 
+            string defaultQualifierAction;
+            if (selector.defaultQualifier.action != null)
+                defaultQualifierAction = selector.defaultQualifier.action.GetType().Name;
+            else
+                defaultQualifierAction = "<None>";
+
+
+            selectorInfo += string.Format("  DefaultQualifier:    {0}\n", selector.defaultQualifier);
+            selectorInfo += string.Format("  Action:       {0}\n", defaultQualifierAction);
+            selectorInfo += "\n";
+
             return selectorInfo;
         }
-
 
 
 

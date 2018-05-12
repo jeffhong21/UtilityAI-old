@@ -20,42 +20,42 @@
         void RegenerateIds();
         byte[] PrepareForSerialize();
         void InitializeAfterDeserialize(byte[] data);
-        Guid id { get; }
-        string name { get; set; }
-        Selector rootSelector { get; set; }
-        int selectorCount { get; }
-        Selector Item { get; }
+        //Guid id { get; }
+        //string name { get; set; }
+        //Selector rootSelector { get; set; }
+        //int selectorCount { get; }
+        //Selector Item { get; }
     }
 
 
     [Serializable]
     public class UtilityAI : IUtilityAI
     {
-        #region Properties
+        [SerializeField] [HideInInspector]
+        private byte[] data;
 
         public Guid id { get; private set; }
-        public string name { get; set; }
-        public Selector rootSelector { get; set; }
-        public ScoreSelector selector;
-
+        public string name; // { get; set; }
+        public Selector rootSelector; // { get; set; }
+        //public ScoreSelector selector;
+        //public List<Selector> selectors = new List<Selector>();
         public int selectorCount { get; private set; }
         //  Get Selector with specific index.
         public Selector Item { get; private set; }
 
-        #endregion
 
 
         public UtilityAI()
         {
             rootSelector = new ScoreSelector();
-            selector = new ScoreSelector();
+            //selector = new ScoreSelector();
             RegenerateIds();
         }
 
         public UtilityAI(string aiName)
         {
             rootSelector = new ScoreSelector();
-            selector = new ScoreSelector();
+            //selector = new ScoreSelector();
             name = aiName;
             RegenerateIds();
         }
@@ -80,7 +80,8 @@
             throw new NotImplementedException();
         }
 
-        public void RegenerateIds(){
+        public void RegenerateIds()
+        {
             id = Guid.NewGuid();
             //Debug.Log(id);
         }
@@ -110,19 +111,15 @@
 
 
 
-        [SerializeField] [HideInInspector]
-        private byte[] data;
+        #region Serialization
 
         public byte[] PrepareForSerialize()
         {
-            //throw new NotImplementedException();
             MemoryStream memoryStream = new MemoryStream();
             BinaryFormatter binaryFormatter = new BinaryFormatter();
 
             //  Serialize utilityAI to memoryStream
-            binaryFormatter.Serialize(memoryStream, selector);
-
-            //data = memoryStream.ToArray();
+            binaryFormatter.Serialize(memoryStream, rootSelector);
 
             memoryStream.Close();
             return memoryStream.ToArray();
@@ -133,9 +130,8 @@
         /// </summary>
         public void OnBeforeSerialize()
         {
+            //Debug.Log("Prepare for serialization");
             data = PrepareForSerialize();
-
-            //throw new NotImplementedException();
         }
 
 
@@ -143,30 +139,30 @@
         {
             int count = 0;
 
-            if(data != null){
+            if (data != null)
+            {
                 object obj = new BinaryFormatter().Deserialize(new MemoryStream(data));
 
                 if (obj is Selector)
                 {
                     Selector root = obj as Selector;
-                    rootSelector = root;
-                    selector = root as ScoreSelector;
+                    rootSelector = obj as Selector;
+                    //selector = root as ScoreSelector;
 
-                    if (count < 1)
-                    {
-                        Debug.Log("Succesfully Serialized");
-                        count++;
-                    }
+                    //if (count < 1){
+                    //    Debug.Log("Succesfully Serialized");
+                    //    count++;
+                    //}
+                    return;
                 }
+
                 else throw new ApplicationException("Unable to deserialize type " + obj.GetType());
             }
 
-            if(count < 1){
-                Debug.Log("Did not Deserialize");
-                count++;
-            }
-
-            //throw new NotImplementedException();
+            //if (count < 1){
+            //    Debug.Log("Did not Deserialize");
+            //    count++;
+            //}
         }
 
 
@@ -175,11 +171,18 @@
         /// </summary>
         public void OnAfterDeserialize()
         {
+            //Debug.Log("After deserialize");
             InitializeAfterDeserialize(data);
-
             // InitializeAfterDeserialize(object rootObject);
-            //throw new NotImplementedException();
+
         }
+
+        #endregion
+
+
+
+
+
     }
 }
 

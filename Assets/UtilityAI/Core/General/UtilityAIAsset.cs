@@ -126,13 +126,15 @@
         [HideInInspector]
         public UtilityAI configuration;
 
+
+
         ///<summary>
         ///Creates an instance for the specified AI.
         ///</summary>
         ///<param name = "aiId" > The name of the ai that gets registered.</param>
         ///<param name = "aiName" > Name of the asset file.</param>
         ///<returns></returns>
-        public UtilityAIAsset CreateAsset(string aiId, string aiName, bool isMockAI = false)
+        public virtual UtilityAIAsset CreateAsset(string aiId, string aiName, bool isSelect = true)
         {
             UtilityAIAsset asset = ScriptableObject.CreateInstance<UtilityAIAsset>();
 
@@ -145,74 +147,97 @@
 
             asset.aiConfig = ProjectAsset.GetData(asset.configuration);
 
-            if (isMockAI){
-                ConfigureAI(asset.configuration.selector);
-            }
-                
+            ////  Creating Demo AI
+            //if (isMockAI){
+            //    var config = new UtilityAIConfig(asset);
+            //    asset = config.asset;
+            //}
 
             AssetDatabase.CreateAsset(asset, assetDir);
             AssetDatabase.SaveAssets();
 
-
+            if(isSelect){
+                Selection.activeObject = asset;
+            }
+                
+            
             return asset;
+        }
+
+        public virtual UtilityAIAsset CreateAsset<T>(string aiId, string aiName, bool isSelect = true) where T : UtilityAIConfig
+        {
+            UtilityAIAsset asset = CreateAsset(aiId, aiName, isSelect);
+            SetAssetConfig<T>(asset);
+            AssetDatabase.SaveAssets();
+            return asset;
+        }
+
+
+        public void SetAssetConfig<TConfig>(UtilityAIAsset asset) where TConfig : UtilityAIConfig
+        {
+            TConfig config = (TConfig)Activator.CreateInstance(typeof(TConfig), new object[] { asset });
+            asset = config.asset;
         }
 
 
         #region MockAIs
 
-        IAction a;
-        IScorer scorer;
-        List<IScorer> scorers;
-        IQualifier q;
-        Selector s;
+        //IAction a;
+        //IScorer scorer;
+        //List<IScorer> scorers;
+        //IQualifier q;
+        //Selector s;
 
-        List<IQualifier> qualifiers;
-        List<IScorer[]> allScorers;
-        List<IAction> actions;
+        //List<IQualifier> qualifiers;
+        //List<IScorer[]> allScorers;
+        //List<IAction> actions;
 
-        void ConfigureAI(Selector rs)
-        {
-            if (qualifiers == null) qualifiers = new List<IQualifier>();
-            if (allScorers == null) allScorers = new List<IScorer[]>();
-            if (actions == null) actions = new List<IAction>();
+        //void ConfigureClient(Selector rs)
+        //{
+        //    if (qualifiers == null) qualifiers = new List<IQualifier>();
+        //    if (allScorers == null) allScorers = new List<IScorer[]>();
+        //    if (actions == null) actions = new List<IAction>();
 
 
-            a = new ScanForEntities();
-            actions.Add(a);
-            a = new ScanForPositions();
-            actions.Add(a);
-            scorers = new List<IScorer>();
-            scorer = new HasEnemies();
-            scorers.Add(scorer);
-            allScorers.Add(scorers.ToArray());
-            scorers = new List<IScorer>();
-            scorer = new TestScorerB();
-            scorers.Add(scorer);
-            allScorers.Add(scorers.ToArray());
-            q = new CompositeScoreQualifier();
-            qualifiers.Add(q);
-            q = new CompositeScoreQualifier();
-            qualifiers.Add(q);
+        //    a = new ScanForEntities();
+        //    actions.Add(a);
+        //    a = new ScanForPositions();
+        //    actions.Add(a);
 
-            //  Setup each qualifiers action and scorers.
-            for (int index = 0; index < qualifiers.Count; index++)
-            {
-                //  Add qualifier to rootSelector.
-                rs.qualifiers.Add(qualifiers[index]);
-                var qualifier = rs.qualifiers[index];
-                //  Set qualifier's action.
-                qualifier.action = actions[index];
-                //  Add scorers to qualifier.
-                foreach (IScorer scorer in allScorers[index])
-                {
-                    if (qualifier is CompositeQualifier)
-                    {
-                        var q = qualifier as CompositeQualifier;
-                        q.scorers.Add(scorer);
-                    }
-                }
-            }
-        }
+        //    scorers = new List<IScorer>();
+        //    scorer = new HasEnemies();
+        //    scorers.Add(scorer);
+        //    allScorers.Add(scorers.ToArray());
+
+        //    scorers = new List<IScorer>();
+        //    scorer = new HasEnemiesInRange();
+        //    scorers.Add(scorer);
+        //    allScorers.Add(scorers.ToArray());
+
+        //    q = new CompositeScoreQualifier();
+        //    qualifiers.Add(q);
+        //    q = new CompositeScoreQualifier();
+        //    qualifiers.Add(q);
+
+        //    //  Setup each qualifiers action and scorers.
+        //    for (int index = 0; index < qualifiers.Count; index++)
+        //    {
+        //        //  Add qualifier to rootSelector.
+        //        rs.qualifiers.Add(qualifiers[index]);
+        //        var qualifier = rs.qualifiers[index];
+        //        //  Set qualifier's action.
+        //        qualifier.action = actions[index];
+        //        //  Add scorers to qualifier.
+        //        foreach (IScorer scorer in allScorers[index])
+        //        {
+        //            if (qualifier is CompositeQualifier)
+        //            {
+        //                var q = qualifier as CompositeQualifier;
+        //                q.scorers.Add(scorer);
+        //            }
+        //        }
+        //    }
+        //}
 
         #endregion
     }

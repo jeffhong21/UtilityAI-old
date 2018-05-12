@@ -13,12 +13,14 @@
     [Serializable]
     public abstract class ActionWithOptions<TOption> : IAction, IEquatable<TOption>
     {
-        public string name;
-        public TaskNetworkComponent utilityAIComponent { get; set; }
-        public ActionStatus actionStatus { get; protected set; }
+        public string _name;
+        public string name { get { return _name; } set { _name = value; } }
+        //public TaskNetworkComponent utilityAIComponent { get; set; }
+        //public ActionStatus actionStatus { get; protected set; }
 
         //  All the OptionScorers attached to this action.
-        public List<IOptionScorer<TOption>> _scorers;
+        [SerializeField]
+        private List<IOptionScorer<TOption>> _scorers;
         public List<IOptionScorer<TOption>> scorers
         {
             get { return _scorers; }
@@ -30,12 +32,6 @@
 
         protected abstract void Execute(IAIContext context);
 
-
-        //public void EndAction(){
-        //    if (actionStatus != ActionStatus.Running)
-        //        return;
-        //    actionStatus = ActionStatus.Success;
-        //}
 
 
         /// <summary>
@@ -67,8 +63,7 @@
                 scoredOptions.Add(new ScoredOption<TOption>(option, score));
             }
 
-            //for (int index = 0; index < scoredOptions.Count; index++)
-            //{
+            //for (int index = 0; index < scoredOptions.Count; index++){
             //    //  Compare al the ScoredOptions.
             //}
             scoredOptions.Sort();
@@ -123,7 +118,7 @@
         /// </summary>
         /// <param name="other">Other.</param>
         public void CloneFrom(ActionWithOptions<TOption> other){
-            utilityAIComponent = other.utilityAIComponent;
+            //utilityAIComponent = other.utilityAIComponent;
             scorers = other.scorers;
             scoredOptions = other.scoredOptions;
         }

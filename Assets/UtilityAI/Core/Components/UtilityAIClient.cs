@@ -20,7 +20,15 @@
     {
         private TaskNetworkComponent taskNetwork;
         [SerializeField]
-        public UtilityAI ai; // { get; set; }
+        private UtilityAI _ai;
+        public UtilityAI ai{
+            get{
+                return _ai;
+            }
+            set{
+                _ai = value;
+            }
+        }
 
 
         [SerializeField]
@@ -40,35 +48,41 @@
         private float _startDelayMax;
         public float startDelayMax { get { return _startDelayMax; } set { _startDelayMax = value; } }
 
+        [SerializeField] [HideInInspector]
+        private AIContextProvider contextProvider;
 
-        private IContextProvider contextProvider;
-        private IAIContext context;
         public IAction currentAction { get; protected set; }
 
         //  For Debuging.
-        public bool debug;
-        public Dictionary<CompositeQualifier, float> selectorResults = new Dictionary<CompositeQualifier, float>();
-        public event Action<IAIContext, List<IQualifier>> ActionSelected;
+        public Dictionary<IQualifier, float> selectorResults;
 
 
 
-        public UtilityAIClient(Guid aiId, IContextProvider contextProvider) {}
 
-        public UtilityAIClient(UtilityAI ai)
+        public UtilityAIClient(Guid aiId, IContextProvider contextProvider) 
+        {
+            //this.ai = ai;
+            this.contextProvider = contextProvider as AIContextProvider;
+
+            this.intervalMin = this.intervalMax = 1f;
+            this.startDelayMin = this.startDelayMax = 0f;
+        }
+
+        public UtilityAIClient(UtilityAI ai, IContextProvider contextProvider)
         {
             this.ai = ai;
-            //contextProvider = taskNetwork.contextProvider;
-            //context = taskNetwork.context;
+            this.contextProvider = contextProvider as AIContextProvider;
 
             this.intervalMin = this.intervalMax = 1f;
             this.startDelayMin = this.startDelayMax = 0f;
             state = UtilityAIClientState.Stopped;
-            //Debug.Log("Initialized via scriptable object");
         }
 
-        public UtilityAIClient(UtilityAI ai, float intervalMin, float intervalMax, float startDelayMin, float startDelayMax)
+        public UtilityAIClient(UtilityAI ai, IContextProvider contextProvider, float intervalMin, float intervalMax, float startDelayMin, float startDelayMax)
         {
             this.ai = ai;
+            this.contextProvider = contextProvider as AIContextProvider;
+
             this.intervalMin = intervalMin;
             this.intervalMax = intervalMax;
             this.startDelayMin = startDelayMin;
@@ -76,75 +90,76 @@
             state = UtilityAIClientState.Stopped;
         }
 
-        //  TEMP
-        public UtilityAIClient(TaskNetworkComponent taskNetwork, UtilityAI ai)
-        {
-            this.taskNetwork = taskNetwork;
-            this.ai = ai;
-            contextProvider = taskNetwork.contextProvider;
-            context = taskNetwork.context;
-            
-            this.intervalMin = this.intervalMax = 1f;
-            this.startDelayMin = this.startDelayMax = 0f;
-            state = UtilityAIClientState.Stopped;
-        }
-        //  TEMP
-        public UtilityAIClient(TaskNetworkComponent taskNetwork, UtilityAI ai, float intervalMin, float intervalMax, float startDelayMin, float startDelayMax)
-        {
-            this.taskNetwork = taskNetwork;
-            this.ai = ai;
-            contextProvider = taskNetwork.contextProvider;
-            context = taskNetwork.context;
-
-            this.intervalMin = intervalMin;
-            this.intervalMax = intervalMax;
-            this.startDelayMin = startDelayMin;
-            this.startDelayMax = startDelayMax;
-            state = UtilityAIClientState.Stopped;
-        }
 
 
         /// <summary>
         /// For Debugging
         /// </summary>
-        public Dictionary<CompositeQualifier, float> GetSelectorResults(IAIContext context, IList<IQualifier> qualifiers)
+        public Dictionary<IQualifier, float> GetSelectorResults(IAIContext context, IList<IQualifier> qualifiers, IDefaultQualifier defaultQualifer)
         {
-            selectorResults.Clear();
+            if (selectorResults == null)
+                selectorResults = new Dictionary<IQualifier, float>();
+            else
+                selectorResults.Clear();
+            
             for (int index = 0; index < qualifiers.Count; index++){
                 CompositeQualifier qualifier = qualifiers[index] as CompositeQualifier;
                 var score = qualifier.Score(context, qualifier.scorers);
                 selectorResults.Add(qualifier, score);
             }
 
+
+            var dq = defaultQualifer as IQualifier;
+            selectorResults.Add(dq, defaultQualifer.Score(context));
+
             return selectorResults;
         }
 
 
+
         public void Execute()
         {
-            IAction newAction = ai.Select(context);
-            if (currentAction != newAction){
-                currentAction = newAction;
-
-                //currentAction.utilityAIComponent = taskNetwork;
-
-                //if (ActionSelected != null){
-                //    ActionSelected(context, ai.rootSelector.qualifiers);
-                //    Debug.Log(ai.name + " just pinged debugger");
-                //}
-                    
-                selectorResults = GetSelectorResults(context, ai.rootSelector.qualifiers);
-            }
-            else{
-                return;
-            }
-
+            IAction newAction = ai.Select(contextProvider.GetContext());
+            currentAction = newAction;
+            //  For Debug
+            selectorResults = GetSelectorResults(contextProvider.GetContext(), ai.rootSelector.qualifiers, ai.rootSelector.defaultQualifier);
+            // --------------
             if (currentAction == null)
                 return;
+
             //  Execute the current action.
-            currentAction.ExecuteAction(context);
-            //Debug.Log("Executing " + currentAction.GetType().Name);
+            //Debug.Log("Executing " + currentAction.name);
+            currentAction.ExecuteAction(contextProvider.GetContext());
+
         }
+
+
+
+        //public void Execute2()
+        //{
+        //    IAction newAction = ai.Select(context);
+        //    Debug.Log(string.Format("Current Action:  {0}\nNew Action: {1}", currentAction, newAction));
+        //
+        //    if (currentAction != newAction){
+        //        currentAction = newAction;
+        //        //currentAction.utilityAIComponent = taskNetwork;
+        //        //if (ActionSelected != null){
+        //        //    ActionSelected(context, ai.rootSelector.qualifiers);
+        //        //    Debug.Log(ai.name + " just pinged debugger");
+        //        //}
+        //        selectorResults = GetSelectorResults(context, ai.rootSelector.qualifiers, ai.rootSelector.defaultQualifier);
+        //    }
+        //    else{
+        //        return;
+        //    }
+        //
+        //    if (currentAction == null)
+        //        return;
+        //   
+        //    //  Execute the current action.
+        //    currentAction.ExecuteAction(context);
+        //    Debug.Log("Executing " + currentAction.GetType().Name);
+        //}
 
 
 
