@@ -35,8 +35,8 @@
         private byte[] data;
 
         public Guid id { get; private set; }
-        public string name; // { get; set; }
-        public Selector rootSelector; // { get; set; }
+        public string name{ get; set; }
+        public Selector rootSelector{ get; set; }
         //public ScoreSelector selector;
         //public List<Selector> selectors = new List<Selector>();
         public int selectorCount { get; private set; }

@@ -16,7 +16,7 @@
         [SerializeField]
         public float scanRange = 20f;
 
-        private string entityTag = Bang.Tags.Entity;
+        private string entityTag = Tags.Entity;
 
 
         protected override void Execute(IAIContext context)

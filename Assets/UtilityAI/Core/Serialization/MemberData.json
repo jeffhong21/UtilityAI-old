@@ -1,0 +1,31 @@
+﻿{
+  "Property" : 
+  {
+    "Name" :  "property name",
+    "Value" : "property value",
+    "Type" : "property type"
+  }
+  "Property": 
+  {
+    "Name" : "property name",
+    "Value" : 
+    [
+      {
+        "Property": 
+        {
+          "Name" : "property name",
+          "Value" : "property value",
+          "Type" : "property type"
+        },
+        "Property": 
+        {
+          "Name" : "property name",
+          "Value" : "property value",
+          "Type" : "property type"
+        }
+      }
+    ],
+    "Type": "property type"
+  }
+
+}

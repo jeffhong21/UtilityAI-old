@@ -57,7 +57,7 @@
         public Dictionary<IQualifier, float> selectorResults;
 
 
-
+        public bool debugClient;
 
         public UtilityAIClient(Guid aiId, IContextProvider contextProvider) 
         {
@@ -128,7 +128,7 @@
                 return;
 
             //  Execute the current action.
-            //Debug.Log("Executing " + currentAction.name);
+            if(debugClient) Debug.Log("Executing " + currentAction.name);
             currentAction.ExecuteAction(contextProvider.GetContext());
 
         }

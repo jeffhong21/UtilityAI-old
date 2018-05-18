@@ -1,9 +1,13 @@
 ﻿<Properties StartupConfiguration="{5A6D36D9-6A32-0D56-BD7C-975C39BDAFAD}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/UtilityAI/Entity/AIEntityPerceptionModule.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Plugins/JsonDotNet/Source/Newtonsoft.Json/Converters/BinaryConverter.cs">
     <Files>
-      <File FileName="Assets/UtilityAI/Entity/AIEntityController.cs" Line="81" Column="9" />
-      <File FileName="Assets/UtilityAI/Resources/Library/Actions/PatrolAction.cs" Line="31" Column="1" />
-      <File FileName="Assets/UtilityAI/Entity/AIEntityPerceptionModule.cs" Line="26" Column="76" />
+      <File FileName="../../unity_assets/Apex/Apex Binaries/ApexSerialization.XML" Line="449" Column="18" />
+      <File FileName="Assets/UtilityAI/Core/General/TaskNetworkUtilities.cs" Line="37" Column="38" />
+      <File FileName="Assets/UtilityAI/Core/General/JsonSerializer.cs" Line="9" Column="6" />
+      <File FileName="Assets/UtilityAI/Core/Serialization/SerializationMaster.cs" Line="48" Column="63" />
+      <File FileName="Assets/Plugins/JsonDotNet/Source/Newtonsoft.Json/Bson/BsonWriter.cs" Line="32" Column="7" />
+      <File FileName="Assets/Plugins/JsonDotNet/Source/Newtonsoft.Json/Converters/EnumerableVectorConverter.cs" Line="36" Column="1" />
+      <File FileName="Assets/Plugins/JsonDotNet/Source/Newtonsoft.Json/Converters/BinaryConverter.cs" Line="74" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

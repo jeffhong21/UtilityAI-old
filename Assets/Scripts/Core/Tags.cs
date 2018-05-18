@@ -1,10 +1,9 @@
-﻿namespace Bang
+﻿
+
+public static class Tags
 {
-	public static class Tags 
-	{
-        public const string Player = "Player";
-		public const string Entity = "Entity";
+    public const string Player = "Player";
+    public const string Entity = "Entity";
 
 
-	}
 }

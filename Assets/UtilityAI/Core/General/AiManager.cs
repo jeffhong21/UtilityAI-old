@@ -15,7 +15,7 @@
         /// Gets all registered clients.
         /// </summary>
         /// <value>All clients.</value>
-        public static HashSet<UtilityAIClient> allClients { get; private set; } = new HashSet<UtilityAIClient>();
+        //public static HashSet<UtilityAIClient> allClients { get; private set; } = new HashSet<UtilityAIClient>();
 
 
         /// <summary>
@@ -53,18 +53,18 @@
         }
 
 
-        public static void Register(UtilityAIClient client){
-            allClients.Add(client);
-            //GetAIClient += client.Stop;
-        }
+        //public static void Register(UtilityAIClient client){
+        //    allClients.Add(client);
+        //    //GetAIClient += client.Stop;
+        //}
 
 
-        public static void UnRegister(UtilityAIClient client){
-            if(allClients.Contains(client)){
-                allClients.Remove(client);
-                //GetAIClient -= client.Start;
-            }
-        }
+        //public static void UnRegister(UtilityAIClient client){
+        //    if(allClients.Contains(client)){
+        //        allClients.Remove(client);
+        //        //GetAIClient -= client.Start;
+        //    }
+        //}
 
 
 

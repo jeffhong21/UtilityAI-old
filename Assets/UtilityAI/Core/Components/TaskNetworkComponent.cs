@@ -76,7 +76,7 @@
             if (contextProvider == null){
                 contextProvider = gameObject.GetComponent(typeof(IContextProvider)) as AIContextProvider;
                 if(contextProvider != null){
-                    contextProvider.context = new AIContext(GetComponent<AIEntityController>());
+                    contextProvider.context = new AIContext(GetComponent<EntityAIController>());
                     context = contextProvider.GetContext();
                 }
                 else{
@@ -85,7 +85,7 @@
             }
             else if (context == null && contextProvider != null){
                 if(contextProvider.context == null)
-                    contextProvider.context = new AIContext(GetComponent<AIEntityController>());
+                    contextProvider.context = new AIContext(GetComponent<EntityAIController>());
                 context = contextProvider.GetContext();
             }
 
@@ -94,8 +94,9 @@
 
 		void Awake()
         {
+            if (contextProvider == null) contextProvider = gameObject.GetComponent(typeof(IContextProvider)) as AIContextProvider;
             //  Initialize Context
-            //contextProvider = null;
+            contextProvider = null;
             InitializeContext();
 
         }
@@ -109,7 +110,7 @@
 
 		void OnEnable()
         {
-            InitializeContext();
+            //InitializeContext();
             //Debug.Log("--  Initialize Context via OnEnable");
 
             //if(initializeWithTestAI)

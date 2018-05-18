@@ -1,6 +1,7 @@
 ﻿namespace UtilityAI
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Reflection;
     using System.Linq;
@@ -20,12 +21,47 @@
             return fields;
         }
 
-        public static PropertyInfo[] GetAllProperties(object obj)
+        public static PropertyInfo[] GetAllProperties(object obj, BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance)
         {
             Type type = obj.GetType();
-            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            PropertyInfo[] properties = type.GetProperties(bindingFlags);
             return properties;
         }
+
+
+        public static void SetMemberData(PropertyInfo prop, object obj)
+        {
+            Dictionary<object, Type> propertyValue = new Dictionary<object, Type>();
+            Dictionary<string, Dictionary<object, Type>> propertyInfo = new Dictionary<string, Dictionary<object, Type>>();
+
+            //  Name of the property.
+            string elementName = prop.Name;
+            //  Property type.
+            Type elementType = prop.PropertyType;
+            //  Property value
+            object element = prop.GetValue(obj, null);
+            //ICollection items = element as ICollection;
+
+            if (element != null && element is IEnumerable){
+                foreach (IEnumerable item in element as IEnumerable){
+                    Type itemType = item as Type;
+                    PropertyInfo[] itemInfo = itemType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    foreach (PropertyInfo property in itemInfo)
+                    {
+                        Debug.Log(property.Name + "" + property.GetValue(obj, null) + "" + property.PropertyType + "");
+                    }
+                }
+            }
+
+
+                //for (int i = 0; i < count; i ++){
+                //    object item = property.GetValue(utilityAI, new object[] { i });
+                //    collectionItems += "    " + item.GetType().Name + "\n";
+                //}
+
+
+        }
+
 
 
         public static string GetAiCategoryName<T>()
@@ -73,8 +109,6 @@
 
 
     }
-
-
 
 
 

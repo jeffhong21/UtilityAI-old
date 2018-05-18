@@ -1,4 +1,4 @@
-namespace UtilityAI
+﻿namespace UtilityAI
 {
     using UnityEngine;
     using UnityEditor;
@@ -7,7 +7,7 @@ namespace UtilityAI
 
     public class PerceptionVisualizer : MonoBehaviour
     {
-        public AIEntityPerceptionModule entity;
+        AIPerceptionComponent entity;
 
         Color sightRangeColor = new Color(1, 1, 1, 0.5f);
         Color rangeAttackRangeColor = new Color(1, 1, 1, 0.5f);
@@ -19,11 +19,9 @@ namespace UtilityAI
 
         void OnEnable()
         {
-            if (entity == null) entity = GetComponent<AIEntityPerceptionModule>();
+            if (entity == null) entity = GetComponent<AIPerceptionComponent>();
 
         }
-
-
 
 
         void OnDrawGizmos()

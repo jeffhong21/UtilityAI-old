@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Reflection;
     using UnityEngine;
@@ -49,45 +50,123 @@
 
 
 
+        void AIReflection()
+        {
+
+            //if (GUILayout.Button("Debug AI RootSelector Properties")){
+            //    var utilityAI = currentClient.configuration.rootSelector;
+            //    var obj = TaskNetworkUtilities.GetAllProperties(utilityAI);
+            //    foreach (PropertyInfo info in obj){
+            //        Debug.Log(info.GetValue(utilityAI));
+            //    }
+            //}
+            if (currentClient == null) return;
+
+            var utilityAI = currentClient.configuration.rootSelector;
+
+
+            PropertyInfo[] properties = TaskNetworkUtilities.GetAllProperties(utilityAI);
+            foreach (PropertyInfo property in properties)
+            {
+                string displayInfo = "";
+
+
+                //  Name of the property.
+                string propertyName = property.Name;
+                //  Property type.
+                Type propertyType = property.PropertyType;
+                //  What class it was declared in.
+                Type declaringType = property.DeclaringType;
+                //IEnumerable<CustomAttributeData> customAttributes = property.CustomAttributes;
+                //  If it is a property, field or method.
+                MemberTypes memberType = property.MemberType;
+                object getValue = property.GetValue(utilityAI, null);
+                ICollection collection = getValue as ICollection;
+
+                int? count;
+                string countString = "";
+                string collectionItems = "";
+                string itemInfoString = "";
+
+                if (collection != null){
+                    count = collection.Count;
+                    countString = "(Count: " + count + ")";
+                    if(getValue is IEnumerable)
+                    {
+                        collectionItems += "  Collection Items\n";
+                        IList list = getValue as IList;
+                        int index = 0;
+                        foreach(object obj in list)
+                        {
+                            itemInfoString += "    " + obj.GetType() + "(" + index + ")\n";
+                            PropertyInfo[] itemInfo = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                            foreach (PropertyInfo item in itemInfo){
+                                itemInfoString += string.Format("      Property Name:     {0}\n" +
+                                                               "      Property Type:     {1}\n" +
+                                                               "      Property GetValue: {2}\n\n", 
+                                                               item.Name, item.PropertyType, item.GetValue(obj, null));
+                            }
+                            //FieldInfo[] fields = obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                            //foreach (FieldInfo item in fields)
+                            //{
+                            //    itemInfoString += string.Format("      Field Name:     {0}\n" +
+                            //                                    "      Field Type:     {1}\n" +
+                            //                                    "      Field GetValue: {2}\n\n",
+                            //                                    item.Name, item.FieldType, item.GetValue(obj));
+                            //}
+                            index++;
+                            collectionItems += itemInfoString + "\n";
+                        }
+                    }
+
+                    //for (int i = 0; i < count; i ++){
+                    //    object item = property.GetValue(utilityAI, new object[] { i });
+                    //    collectionItems += "    " + item.GetType().Name + "\n";
+                    //}
+
+                }
+                else{
+                    count = null;
+                    countString = "<None>";
+                }
+
+
+                displayInfo = string.Format("Property Name:     {0}\n" +
+                                            "Property Type:     {1}\n" +
+                                            "Declaring Type:    {2}\n" +
+                                            "Custom Attributes: {3}\n" +
+                                            "Property GetValue: {4} ({7})| {5}\n" +
+                                            "{6}\n", 
+                                            propertyName, propertyType, declaringType, "<None>", getValue, countString, collectionItems, getValue.GetType());
+                
+                GUILayout.Label(displayInfo);
+            }
+
+
+
+        }
+
+
+
+
+
+
+
 
 		void OnGUI()
         {
             menuBarRect = new Rect(0, 2, position.width, menuBarHeight);
             DrawMenuBar(menuBarRect);
 
-
             Rect rect = new Rect(0, menuBarRect.y + menuBarHeight + 2 ,position.width, position.height );
             GUILayout.BeginArea(rect);
+            DrawHeader();
+            GUILayout.Space(5);
 
-            //  --Header
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                var activeClientName = currentClient == null ? "<None>" : currentClient.name;
-                GUILayout.Label("Active Client: " + activeClientName);
-            }
+            AIReflection();
 
-            //  -- Container
-            using (new EditorGUILayout.VerticalScope())
-            {
-                if (currentClient != null)
-                {
-                    //var count = currentClient.configuration.selector.qualifiers.Count;
-                    var count = currentClient.configuration.rootSelector.qualifiers.Count;
-                    GUILayout.Label("Number of Qualifiers:  " + count.ToString());
-                }
-
-                //ContainerNode container = new ContainerNode();
-                //container.DrawNode(new Vector2(rect.width / 2 - 100, rect.y + 24));
-            }
-
-
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                GUILayout.Label("Client Editor Inspector");
-            }
-
-            DrawDebug();
-
+            GUILayout.Space(5);
+            //DrawDebug();
             GUILayout.EndArea();
 
             //DrawContainer(containerRect);
@@ -139,7 +218,35 @@
             GUILayout.EndArea();
         }
 
+        private void DrawHeader()
+        {
+            //  --Header
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                var activeClientName = currentClient == null ? "<None>" : currentClient.name;
+                GUILayout.Label("Active Client: " + activeClientName);
+            }
 
+            ////  -- Container
+            //using (new EditorGUILayout.VerticalScope())
+            //{
+            //    if (currentClient != null)
+            //    {
+            //        //var count = currentClient.configuration.selector.qualifiers.Count;
+            //        var count = currentClient.configuration.rootSelector.qualifiers.Count;
+            //        GUILayout.Label("Number of Qualifiers:  " + count.ToString());
+            //    }
+
+            //    //ContainerNode container = new ContainerNode();
+            //    //container.DrawNode(new Vector2(rect.width / 2 - 100, rect.y + 24));
+            //}
+
+
+            //using (new EditorGUILayout.HorizontalScope())
+            //{
+            //    GUILayout.Label("Client Editor Inspector");
+            //}
+        }
 
         #region DebugInspector
 
@@ -167,8 +274,8 @@
                         foreach (PropertyInfo info in obj)
                         {
                             //info.GetValue(entity);
-                            Debug.Log(info.GetValue(entity).GetType());
-                            Debug.Log(info.GetValue(entity));
+                            //Debug.Log(info.GetValue(entity).GetType());
+                            //Debug.Log(info.GetValue(entity));
                         }
                     }
 

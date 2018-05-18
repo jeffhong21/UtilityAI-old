@@ -109,9 +109,9 @@
                     if (GUILayout.Button("Ok"))
                     {
                         var utilityAIAsset = new UtilityAIAsset();
-                        var aiAsset = utilityAIAsset.CreateAsset(String.IsNullOrEmpty(aiName) || String.IsNullOrWhiteSpace(aiName) ? _defaultAiID : aiName,
-                                                                 String.IsNullOrEmpty(aiName) || String.IsNullOrWhiteSpace(aiName) ? _defaultAiName : aiName,
-                                                                 taskNetwork.selectAiAssetOnCreate);
+                        //var aiAsset = utilityAIAsset.CreateAsset(String.IsNullOrEmpty(aiName) || String.IsNullOrWhiteSpace(aiName) ? _defaultAiID : aiName,
+                                                                 //String.IsNullOrEmpty(aiName) || String.IsNullOrWhiteSpace(aiName) ? _defaultAiName : aiName,
+                                                                 //taskNetwork.selectAiAssetOnCreate);
 
                         //editor.AddUtilityAIAsset(aiAsset);
                         //CloseWindow();
